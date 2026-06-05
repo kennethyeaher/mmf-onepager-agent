@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Maryland Momentum Fund Investment Brief</title>
+<!--
+  Maryland Momentum Fund one page Investment Brief. Fillable template.
+  Fits one US Letter page and exports cleanly to PDF through WeasyPrint.
+
+  INLINE TOKENS
+    {{DOC_TITLE}}       running head, top right
+    {{FUND_LOGO}}       base64 fund logo in the masthead
+    {{COMPANY}}         company name
+    {{SECTOR}}          one line description of what the company does
+    {{RECOMMENDATION}}  the verdict, e.g. Advance to partner meeting
+    {{CONVICTION}}      short conviction note, e.g. Conviction Med High
+    {{DESCRIPTION}}     lead paragraph, the text before the first heading
+    {{PREPARED_BY}} {{SOURCES}} {{ASOF}} {{NEXT_STEP}}   provenance footer
+
+  BLOCK TOKENS
+    {{SIDEBAR}}   Quick Facts and Traction boxes
+    {{MAIN}}      Problem, Business Model, Customers, Competitive, Team boxes
+    {{INVESTOR}}  full width Investor View band
+-->
+<style>
+/* Palette sampled from the fund logos. Maryland maroon and antique gold. */
+:root{
+  --maroon:#7C1D2B;
+  --maroon-deep:#5E141F;
+  --gold:#A9802C;
+  --ink:#211C18;
+  --muted:#6E665B;
+  --faint:#938A7C;
+  --line:#D8D0C0;
+  --line-soft:#E7E0D2;
+  --paper:#FCFAF5;
+  --rail:#F3ECDD;
+  --rail-line:#E3DAC6;
+  --panel:#F2EEE4;
+  --panel-line:#E0D8C7;
+  --sage:#5C7A66;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:"Helvetica Neue",Arial,sans-serif;
+  --mono:"SFMono-Regular",Menlo,Consolas,monospace;
+}
+
+/* Page setup and the running footer printed on every page. */
+@page{
+  size: Letter;
+  margin: 0.4in 0.5in 0.42in 0.5in;
+  @bottom-left{
+    content:"Maryland Momentum Fund   \00B7   Confidential   \00B7   Not for distribution";
+    font-family:var(--mono); font-size:6.5pt; letter-spacing:0.04em; color:#9A9285;
+  }
+  @bottom-right{
+    content:"Page " counter(page);
+    font-family:var(--mono); font-size:6.5pt; letter-spacing:0.06em; color:#9A9285;
+  }
+}
+
+*{ box-sizing:border-box; }
+html,body{ margin:0; }
+body{
+  color:var(--ink); background:var(--paper);
+  font-family:var(--sans);
+  font-size:7.7pt; line-height:1.36;
+  print-color-adjust:exact; -webkit-print-color-adjust:exact;
+}
+.mono{ font-family:var(--mono); }
+
+/* Top rule. A maroon bar over a thin gold line. */
+.toprule{ height:2px; background:var(--maroon); }
+.toprule::after{ content:""; display:block; height:1px; background:var(--gold); opacity:0.6; }
+
+/* Running head. Table so the two ends sit hard left and right. */
+.runhead{ width:100%; margin-top:5px; border-collapse:collapse;
+  font-family:var(--mono); font-size:6.4pt; letter-spacing:0.13em;
+  text-transform:uppercase; color:var(--muted); }
+.runhead .rh-left{ color:var(--maroon); font-weight:600; }
+.runhead .rh-right{ text-align:right; }
+
+/* Masthead. Left cell holds the crest and name, right cell holds the rating. */
+.masthead{ width:100%; margin-top:12px; border-collapse:collapse; }
+.masthead > tbody > tr > td{ vertical-align:top; }
+.mast-inner{ border-collapse:collapse; }
+.crest{ width:34px; vertical-align:top; padding-top:2px; padding-right:11px; }
+.crest img{ width:34px; height:auto; display:block; }
+.company{ font-family:var(--serif); font-weight:500; font-size:22pt;
+  line-height:0.98; letter-spacing:-0.015em; color:var(--ink); }
+.sector{ font-size:8pt; color:var(--muted); margin-top:4px; line-height:1.3; }
+
+/* Recommendation box. Fixed width cell on the right of the masthead. */
+.rating-cell{ width:196px; padding-left:18px; }
+.rating{ border:1px solid var(--panel-line); border-radius:5px; background:var(--panel);
+  padding:8px 11px; position:relative; }
+.rating::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--maroon); }
+.r-label{ font-family:var(--mono); font-size:5.8pt; font-weight:600; letter-spacing:0.13em;
+  text-transform:uppercase; color:var(--muted); }
+.r-rec{ font-family:var(--serif); font-weight:600; font-size:11.5pt; line-height:1.06;
+  color:var(--maroon-deep); margin:1px 0 6px; letter-spacing:-0.01em; }
+.r-conv{ font-family:var(--mono); font-size:6pt; letter-spacing:0.06em; text-transform:uppercase;
+  color:var(--ink); font-weight:600; padding-top:6px; border-top:1px solid var(--panel-line); }
+
+/* Lead paragraph. The text before the first heading. */
+.lead{ font-family:var(--serif); font-size:9pt; line-height:1.4; color:var(--ink);
+  margin:13px 0 0; }
+
+/* Two column body. Table layout, because WeasyPrint flexbox and grid are not reliable. */
+.layout{ display:table; width:100%; margin-top:14px; table-layout:fixed; }
+.sidebar{ display:table-cell; width:31%; vertical-align:top; background:var(--rail);
+  border:1px solid var(--rail-line); border-radius:4px; padding:9px 12px 10px; }
+.main{ display:table-cell; vertical-align:top; padding-left:18px; }
+
+/* Section boxes shared by the sidebar, the main column, and the investor band. */
+.box{ break-inside:avoid; margin-bottom:10px; }
+.box:last-child{ margin-bottom:0; }
+.box h2{ font-family:var(--sans); font-weight:700; font-size:7.6pt; text-transform:uppercase;
+  letter-spacing:0.1em; color:var(--maroon); margin:0 0 4px 0; line-height:1.1;
+  position:relative; padding-left:13px; }
+.box h2::before{ content:""; position:absolute; left:0; top:0.12em; width:6px; height:6px;
+  background:var(--gold); transform:rotate(45deg); }
+.box p, .box li{ font-size:7.5pt; line-height:1.34; margin:0 0 3px 0; color:var(--ink); }
+.box p:last-child, .box li:last-child{ margin-bottom:0; }
+.box strong{ font-weight:700; }
+.box ul{ margin:0; padding-left:0; list-style:none; }
+.box li{ position:relative; padding-left:10px; }
+.box li::before{ content:""; position:absolute; left:0; top:0.52em; width:3px; height:3px;
+  border-radius:50%; background:var(--gold); }
+
+/* Sidebar boxes are separated by thin rules. */
+.sidebar .box{ margin-bottom:8px; padding-top:8px; border-top:1px solid var(--rail-line); }
+.sidebar .box:first-child{ padding-top:0; border-top:0; }
+.sidebar .box li{ font-size:7.2pt; line-height:1.3; }
+
+/* Provenance tags for marking a claim verified or founder stated. */
+.tag{ font-family:var(--mono); font-size:5.4pt; font-weight:600; letter-spacing:0.06em;
+  text-transform:uppercase; padding:1px 4px; border-radius:2px; margin-left:3px; white-space:nowrap; }
+.tag.verified{ color:#3C5A43; background:rgba(122,155,134,0.22); }
+.tag.stated{ color:var(--muted); background:rgba(110,102,91,0.13); }
+
+/* Investor View. The renderer wraps this section as div.box.highlight. Full width band. */
+.box.highlight{ margin-top:14px; border:1px solid var(--panel-line); border-radius:5px;
+  background:var(--panel); padding:11px 16px 12px; position:relative; }
+.box.highlight::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:4px;
+  background:var(--maroon); border-radius:5px 0 0 5px; }
+
+/* Provenance footer. A single row of cells under the body. */
+.provenance{ width:100%; margin-top:10px; border-collapse:collapse;
+  font-family:var(--mono); font-size:5.8pt; letter-spacing:0.05em; text-transform:uppercase;
+  color:var(--faint); }
+.provenance td{ vertical-align:top; padding-right:14px; }
+.provenance .pk{ color:var(--muted); font-weight:600; }
+
+a{ color:var(--maroon-deep); text-decoration:none; }
+</style>
+</head>
+<body>
+
+  <div class="toprule"></div>
+
+  <!-- Running head -->
+  <table class="runhead"><tr>
+    <td class="rh-left">Maryland Momentum Fund &#183; Deal Sourcing Brief</td>
+    <td class="rh-right">{{DOC_TITLE}}</td>
+  </tr></table>
+
+  <!-- Masthead and recommendation box -->
+  <table class="masthead"><tr>
+    <td>
+      <table class="mast-inner"><tr>
+        <td class="crest"><img src="{{FUND_LOGO}}" alt="Maryland Momentum Fund"></td>
+        <td>
+          <div class="company">{{COMPANY}}</div>
+          <div class="sector">{{SECTOR}}</div>
+        </td>
+      </tr></table>
+    </td>
+    <td class="rating-cell">
+      <div class="rating">
+        <div class="r-label">Recommendation</div>
+        <div class="r-rec">{{RECOMMENDATION}}</div>
+        <div class="r-conv">{{CONVICTION}}</div>
+      </div>
+    </td>
+  </tr></table>
+
+  <!-- Lead paragraph -->
+  <p class="lead">{{DESCRIPTION}}</p>
+
+  <!-- Two column body -->
+  <div class="layout">
+    <div class="sidebar">
+
+{{SIDEBAR}}
+
+    </div>
+    <div class="main">
+
+{{MAIN}}
+
+    </div>
+  </div>
+
+  <!-- Investor View band -->
+{{INVESTOR}}
+
+  <!-- Provenance footer -->
+  <table class="provenance"><tr>
+    <td><span class="pk">Prepared by</span> {{PREPARED_BY}}</td>
+    <td><span class="pk">Sources</span> {{SOURCES}}</td>
+    <td><span class="pk">As of</span> {{ASOF}}</td>
+    <td><span class="pk">Next step</span> {{NEXT_STEP}}</td>
+  </tr></table>
+
+</body>
+</html>
