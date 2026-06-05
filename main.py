@@ -1,15 +1,19 @@
 """
 MMF one pager agent. Command line entry point.
 
-Ties the package together: read a per company inputs folder, write the brief
-with Claude and web search, save the Markdown, and render the branded PDF.
+Two modes. The default reads a per company inputs folder, writes the brief with
+Claude and web search, saves the Markdown, and renders the branded PDF. The
+render mode skips the model entirely and rebuilds the PDF from a Markdown file
+you have already generated and edited by hand, so fixing a sector, a
+recommendation, or any wording costs nothing.
 
 The inputs folder holds everything gathered for one company, side by side.
 Text and Markdown files are read inline as notes. PDF files are passed to the
 model as documents. Other file types are skipped with a warning.
 
 Run it like this:
-    python main.py "HighT-Tech" --inputs inputs/htt
+    python main.py "Inception Robotics" --inputs inputs/irob
+    python main.py "Inception Robotics" --render output/Inception_Robotics_onepager.md
 """
 
 import argparse
@@ -108,9 +112,75 @@ def save_markdown(company_name, brief, out_dir):
     return md_path
 
 
+def run_pipeline(company_name, inputs_folder, prompt_path):
+    """
+    Run the full pipeline: read inputs, write the brief, save it, render it.
+
+    Parameters
+    company_name : str
+        The company to research, shown as the headline.
+    inputs_folder : str
+        Path to the per company inputs folder.
+    prompt_path : str
+        Path to the instruction template.
+
+    Returns
+    none
+    """
+    # Load the prompt and the company inputs.
+    system_prompt = Path(prompt_path).read_text(encoding="utf-8")
+    notes_text, pdf_paths = read_inputs(inputs_folder)
+    note_count = len(notes_text.split("---")) - 1 if notes_text else 0
+    print(f"-> Read {note_count} note file(s) and {len(pdf_paths)} PDF(s) "
+          f"from {inputs_folder}")
+
+    # Write the brief with Claude and web search.
+    print("-> Running Claude with web search. This can take 30 to 90 seconds...")
+    brief = brief_agent.build_brief(company_name, notes_text, pdf_paths, system_prompt)
+
+    # Save the Markdown, then render the branded PDF from it.
+    md_path = save_markdown(company_name, brief, OUTPUT_DIR)
+    print(f"-> Saved {md_path}")
+    render_from_markdown(company_name, md_path)
+
+
+def render_from_markdown(company_name, md_path):
+    """
+    Render a branded PDF from an existing Markdown file, with no model call.
+
+    Use this to rebuild the PDF after editing the Markdown by hand, for example
+    to change the sector or the recommendation. It is free because it never
+    calls the model.
+
+    Parameters
+    company_name : str
+        The company name, shown as the headline.
+    md_path : str
+        Path to the Markdown file to render.
+
+    Returns
+    none
+
+    Raises
+    FileNotFoundError
+        If the Markdown file does not exist.
+    """
+    source = Path(md_path)
+    if not source.is_file():
+        raise FileNotFoundError(f"markdown file not found: {md_path}")
+
+    brief = source.read_text(encoding="utf-8")
+    try:
+        pdf_path = renderer.render_pdf(brief, company_name, OUTPUT_DIR)
+        print(f"-> Branded PDF: {pdf_path}")
+    except Exception as error:
+        # Surface the real error instead of hiding it. The Markdown is untouched.
+        print(f"   PDF render failed: {error!r}. The Markdown is untouched.")
+
+
 def main():
     """
-    Parse arguments, run the pipeline, and report where the files were saved.
+    Parse arguments and run either the full pipeline or a render only rebuild.
 
     Parameters
     none
@@ -123,31 +193,23 @@ def main():
 
     parser = argparse.ArgumentParser(description="Generate a branded VC sourcing one pager.")
     parser.add_argument("company", help="Company name, shown as the headline")
-    parser.add_argument("--inputs", required=True,
+    parser.add_argument("--inputs",
                         help="Path to the per company inputs folder")
+    parser.add_argument("--render",
+                        help="Path to an existing Markdown file to rebuild as a PDF, no model call")
     parser.add_argument("--prompt", default=PROMPT_PATH,
                         help="Path to the instruction template")
     args = parser.parse_args()
 
-    # Load the prompt and the company inputs.
-    system_prompt = Path(args.prompt).read_text(encoding="utf-8")
-    notes_text, pdf_paths = read_inputs(args.inputs)
-    print(f"-> Read {len(notes_text.split('---')) - 1 if notes_text else 0} note file(s) "
-          f"and {len(pdf_paths)} PDF(s) from {args.inputs}")
+    # Render mode rebuilds the PDF from an edited Markdown file for free.
+    if args.render:
+        render_from_markdown(args.company, args.render)
+        return
 
-    # Write the brief with Claude and web search.
-    print("-> Running Claude with web search. This can take 30 to 90 seconds...")
-    brief = brief_agent.build_brief(args.company, notes_text, pdf_paths, system_prompt)
-
-    # Save the Markdown and render the branded PDF.
-    md_path = save_markdown(args.company, brief, OUTPUT_DIR)
-    print(f"-> Saved {md_path}")
-    try:
-        pdf_path = renderer.render_pdf(brief, args.company, OUTPUT_DIR)
-        print(f"-> Branded PDF: {pdf_path}")
-    except Exception as error:
-        # Surface the real error instead of hiding it. The Markdown is still saved.
-        print(f"   PDF render failed: {error!r}. The Markdown is saved.")
+    # Otherwise run the full pipeline, which needs an inputs folder.
+    if not args.inputs:
+        parser.error("provide --inputs to generate a brief, or --render to rebuild from Markdown")
+    run_pipeline(args.company, args.inputs, args.prompt)
 
 
 if __name__ == "__main__":
