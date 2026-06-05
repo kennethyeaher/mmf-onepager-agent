@@ -4,7 +4,7 @@ Renderer.
 Turns the Markdown brief into the branded one pager PDF. This step is fully
 mechanical, so it adds no model cost. It reads the labeled front lines off the
 top of the brief, sorts each section into the sidebar or the main column, drops
-everything into the HTML template, and writes a branded HTML file and a PDF.
+everything into the HTML template, and writes a branded PDF.
 
 Layout contract for the Markdown the agent produces:
     The brief opens with labeled lines SECTOR, RECOMMENDATION, and SOURCES, one
@@ -163,7 +163,7 @@ def sort_sections(markdown_text):
 def render_pdf(markdown_text, company_name, out_dir,
                template_path=TEMPLATE_PATH, fund_logo=FUND_LOGO_PATH):
     """
-    Fill the template with the brief and write branded HTML and PDF files.
+    Fill the template with the brief and write the branded PDF.
 
     Parameters
     markdown_text : str
@@ -171,15 +171,13 @@ def render_pdf(markdown_text, company_name, out_dir,
     company_name : str
         The company name, shown as the headline.
     out_dir : str
-        Folder to write the output files into.
+        Folder to write the output file into.
     template_path : str
         Path to the HTML template.
     fund_logo : str
         Path to the fund logo image.
 
     Returns
-    html_path : Path
-        Path to the branded HTML file.
     pdf_path : Path
         Path to the branded PDF file.
     """
@@ -210,9 +208,8 @@ def render_pdf(markdown_text, company_name, out_dir,
     out_dir = Path(out_dir)
     out_dir.mkdir(exist_ok=True)
 
-    html_path = out_dir / f"{safe_name}_onepager.html"
+    # Render the filled template straight to PDF. The HTML is held in memory
+    # only, so no HTML file is written.
     pdf_path = out_dir / f"{safe_name}_onepager.pdf"
-
-    html_path.write_text(filled, encoding="utf-8")
     HTML(string=filled, base_url=str(BASE_DIR)).write_pdf(str(pdf_path))
-    return html_path, pdf_path
+    return pdf_path
