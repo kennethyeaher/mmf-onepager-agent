@@ -11,6 +11,7 @@ Required environment variable:
 """
 
 import base64
+import re
 from pathlib import Path
 
 from anthropic import Anthropic
@@ -40,6 +41,31 @@ def encode_pdf(path):
     return base64.standard_b64encode(Path(path).read_bytes()).decode("utf-8")
 
 
+def strip_narration(brief):
+    """
+    Drop any narration the model wrote before the brief.
+
+    The brief always begins at the SECTOR line. The model sometimes narrates
+    its research first, especially when a search call stumbles, and that text
+    gets joined ahead of the brief. Slicing from the first SECTOR keeps the
+    narration off the page and lets the front block parse correctly.
+
+    Parameters
+    brief : str
+        The joined model response, possibly with narration in front.
+
+    Returns
+    brief : str
+        The response from the SECTOR line onward, or unchanged if not found.
+    """
+    # Prefer a SECTOR at the start of a line, then fall back to the first one
+    # anywhere in case the join left no line break in front of it.
+    match = re.search(r"(?m)^SECTOR:", brief) or re.search(r"SECTOR:", brief)
+    if match:
+        return brief[match.start():]
+    return brief
+
+
 def build_brief(company_name, notes_text, pdf_paths, system_prompt):
     """
     Write the sourcing brief with Claude and web search.
@@ -60,7 +86,7 @@ def build_brief(company_name, notes_text, pdf_paths, system_prompt):
 
     Returns
     brief : str
-        The one page brief as Markdown.
+        The one page brief as Markdown, starting at the SECTOR line.
     """
     client = Anthropic()
 
@@ -109,8 +135,12 @@ def build_brief(company_name, notes_text, pdf_paths, system_prompt):
             continue
         break
 
-    # Keep only the text blocks. Search result blocks are not part of the brief.
-    return "".join(
+    # Join the text blocks into the full response. Search result blocks are
+    # not part of the brief.
+    brief = "".join(
         block.text for block in response.content
         if getattr(block, "type", None) == "text"
     ).strip()
+
+    # Remove any narration the model wrote before the brief began.
+    return strip_narration(brief)
