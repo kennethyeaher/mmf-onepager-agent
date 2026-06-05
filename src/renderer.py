@@ -30,8 +30,8 @@ from weasyprint import HTML
 # Label shown in the top right of the header and used for the file name.
 DOC_TITLE = "Investment Sourcing Brief"
 
-# Name shown in the provenance footer. Edit to your own name.
-PREPARED_BY = "Maryland Momentum Fund"
+# Name shown in the provenance footer.
+PREPARED_BY = "Michael Ravenscroft, MD and Kenneth Yeaher, Associate"
 
 # Resolve paths from the package root so the tool runs from any directory.
 BASE_DIR = Path(__file__).resolve().parent.parent
