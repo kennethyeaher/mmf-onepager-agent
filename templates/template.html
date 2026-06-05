@@ -142,12 +142,17 @@ body{
 .box.highlight::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:4px;
   background:var(--maroon); border-radius:5px 0 0 5px; }
 
-/* Provenance footer. A single row of cells under the body. */
-.provenance{ width:100%; margin-top:10px; border-collapse:collapse;
+/* Provenance footer. Fixed column widths so each value wraps inside its own
+   column instead of pushing the labels around. SOURCES gets the widest cell. */
+.provenance{ width:100%; margin-top:10px; border-collapse:collapse; table-layout:fixed;
   font-family:var(--mono); font-size:5.8pt; letter-spacing:0.05em; text-transform:uppercase;
   color:var(--faint); }
-.provenance td{ vertical-align:top; padding-right:14px; }
-.provenance .pk{ color:var(--muted); font-weight:600; }
+.provenance td{ vertical-align:top; padding-right:14px; line-height:1.4; }
+.provenance td:last-child{ padding-right:0; }
+.provenance .c-prepared{ width:34%; }
+.provenance .c-sources{ width:48%; }
+.provenance .c-date{ width:18%; }
+.provenance .pk{ display:block; color:var(--muted); font-weight:600; margin-bottom:2px; }
 
 a{ color:var(--maroon-deep); text-decoration:none; }
 </style>
@@ -203,9 +208,9 @@ a{ color:var(--maroon-deep); text-decoration:none; }
 
   <!-- Provenance footer -->
   <table class="provenance"><tr>
-    <td><span class="pk">Prepared by</span> {{PREPARED_BY}}</td>
-    <td><span class="pk">Sources</span> {{SOURCES}}</td>
-    <td><span class="pk">Date</span> {{DATE}}</td>
+    <td class="c-prepared"><span class="pk">Prepared by</span> {{PREPARED_BY}}</td>
+    <td class="c-sources"><span class="pk">Sources</span> {{SOURCES}}</td>
+    <td class="c-date"><span class="pk">Date</span> {{DATE}}</td>
   </tr></table>
 
 </body>
