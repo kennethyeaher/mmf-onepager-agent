@@ -9,7 +9,7 @@ Text and Markdown files are read inline as notes. PDF files are passed to the
 model as documents. Other file types are skipped with a warning.
 
 Run it like this:
-    python main.py "Inception Robotics" --inputs inputs/irob
+    python main.py "HighT-Tech" --inputs inputs/htt
 """
 
 import argparse
@@ -143,7 +143,7 @@ def main():
     md_path = save_markdown(args.company, brief, OUTPUT_DIR)
     print(f"-> Saved {md_path}")
     try:
-        html_path, pdf_path = renderer.render_pdf(brief, args.company, OUTPUT_DIR)
+        pdf_path = renderer.render_pdf(brief, args.company, OUTPUT_DIR)
         print(f"-> Branded PDF: {pdf_path}")
     except Exception as error:
         # Surface the real error instead of hiding it. The Markdown is still saved.
