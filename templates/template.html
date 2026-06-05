@@ -13,9 +13,9 @@
     {{COMPANY}}         company name
     {{SECTOR}}          one line description of what the company does
     {{RECOMMENDATION}}  the verdict, e.g. Advance to partner meeting
-    {{CONVICTION}}      short conviction note, e.g. Conviction Med High
+    {{DATE}}            brief date, filled by the renderer
     {{DESCRIPTION}}     lead paragraph, the text before the first heading
-    {{PREPARED_BY}} {{SOURCES}} {{ASOF}} {{NEXT_STEP}}   provenance footer
+    {{PREPARED_BY}} {{SOURCES}}   provenance footer
 
   BLOCK TOKENS
     {{SIDEBAR}}   Quick Facts and Traction boxes
@@ -97,9 +97,7 @@ body{
 .r-label{ font-family:var(--mono); font-size:5.8pt; font-weight:600; letter-spacing:0.13em;
   text-transform:uppercase; color:var(--muted); }
 .r-rec{ font-family:var(--serif); font-weight:600; font-size:11.5pt; line-height:1.06;
-  color:var(--maroon-deep); margin:1px 0 6px; letter-spacing:-0.01em; }
-.r-conv{ font-family:var(--mono); font-size:6pt; letter-spacing:0.06em; text-transform:uppercase;
-  color:var(--ink); font-weight:600; padding-top:6px; border-top:1px solid var(--panel-line); }
+  color:var(--maroon-deep); margin:1px 0 0; letter-spacing:-0.01em; }
 
 /* Lead paragraph. The text before the first heading. */
 .lead{ font-family:var(--serif); font-size:9pt; line-height:1.4; color:var(--ink);
@@ -179,7 +177,6 @@ a{ color:var(--maroon-deep); text-decoration:none; }
       <div class="rating">
         <div class="r-label">Recommendation</div>
         <div class="r-rec">{{RECOMMENDATION}}</div>
-        <div class="r-conv">{{CONVICTION}}</div>
       </div>
     </td>
   </tr></table>
@@ -208,8 +205,7 @@ a{ color:var(--maroon-deep); text-decoration:none; }
   <table class="provenance"><tr>
     <td><span class="pk">Prepared by</span> {{PREPARED_BY}}</td>
     <td><span class="pk">Sources</span> {{SOURCES}}</td>
-    <td><span class="pk">As of</span> {{ASOF}}</td>
-    <td><span class="pk">Next step</span> {{NEXT_STEP}}</td>
+    <td><span class="pk">Date</span> {{DATE}}</td>
   </tr></table>
 
 </body>
