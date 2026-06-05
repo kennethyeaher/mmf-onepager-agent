@@ -93,7 +93,6 @@ the header description. Do not put a heading on it.
 - Headquarters.
 - Stage.
 - Round.
-- Sector.
 - Website.
 
 ## Traction and Key Metrics
