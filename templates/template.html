@@ -12,14 +12,14 @@
     {{FUND_LOGO}}       base64 fund logo in the masthead
     {{COMPANY}}         company name
     {{SECTOR}}          one line description of what the company does
-    {{RECOMMENDATION}}  the verdict, e.g. Advance to partner meeting
+    {{RECOMMENDATION}}  the recorded decision, e.g. Advance to diligence (team)
     {{DATE}}            brief date, filled by the renderer
     {{DESCRIPTION}}     lead paragraph, the text before the first heading
     {{PREPARED_BY}} {{SOURCES}}   provenance footer
 
   BLOCK TOKENS
-    {{SIDEBAR}}   Quick Facts and Traction boxes
-    {{MAIN}}      Problem, Business Model, Customers, Competitive, Team boxes
+    {{SIDEBAR}}   Customers and Partners box
+    {{MAIN}}      Problem box, the centerpiece
     {{INVESTOR}}  full width Investor View band
 -->
 <style>
@@ -96,7 +96,7 @@ body{
 .rating::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--maroon); }
 .r-label{ font-family:var(--mono); font-size:5.8pt; font-weight:600; letter-spacing:0.13em;
   text-transform:uppercase; color:var(--muted); }
-.r-rec{ font-family:var(--serif); font-weight:600; font-size:11.5pt; line-height:1.06;
+.r-rec{ font-family:var(--serif); font-weight:600; font-size:10pt; line-height:1.12;
   color:var(--maroon-deep); margin:1px 0 0; letter-spacing:-0.01em; }
 
 /* Lead paragraph. The text before the first heading. */
