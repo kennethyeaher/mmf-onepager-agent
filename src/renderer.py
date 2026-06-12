@@ -171,6 +171,14 @@ def sort_sections(markdown_text):
     # Normalize list spacing so bullets that follow a note line still render.
     markdown_text = ensure_blank_before_lists(markdown_text)
     html_body = md.markdown(markdown_text, extensions=["sane_lists", "tables"])
+
+    # Mute the provenance note into a caption by tagging its paragraph. The
+    # template styles p.note smaller and lighter so it recedes under the bullets.
+    html_body = re.sub(
+        r"<p>(From the inputs[^<]*)</p>",
+        r'<p class="note">\1</p>',
+        html_body,
+    )
     pieces = re.split(r"(?=<h2)", html_body)
 
     # The template already wraps the lead text in a paragraph, so drop the one
