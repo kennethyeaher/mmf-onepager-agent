@@ -9,9 +9,9 @@ everything into the HTML template, and writes a branded PDF.
 Layout contract for the Markdown the agent produces:
     The brief opens with labeled lines SECTOR, RECOMMENDATION, and SOURCES, one
     per line. Text after those lines and before the first "## " heading becomes
-    the lead paragraph. The section whose heading contains "customers" goes in
-    the left sidebar. The "investor view" section becomes a full width band at 
-    the bottom. Every other section goes in the main column.
+    the lead paragraph. Sections whose heading contains "quick facts" or
+    "traction" go in the left sidebar. The "investor view" section becomes a 
+    full width band at  the bottom. Every other section goes in the main column.
 
 The fund logo is embedded as base64 so the PDF never has a broken image link.
 A per company logo is intentionally not handled here yet. That hook is added in
@@ -41,7 +41,7 @@ TEMPLATE_PATH = BASE_DIR / "templates" / "template.html"
 FUND_LOGO_PATH = BASE_DIR / "assets" / "fund_logo.png"
 
 # Section heading keywords that belong in the left sidebar.
-SIDEBAR_KEYWORDS = ("customers",)
+SIDEBAR_KEYWORDS = ("quick facts", "traction")
 
 # Labeled lines the system prompt emits at the top of the brief.
 FRONT_KEYS = ("SECTOR", "RECOMMENDATION", "SOURCES")
