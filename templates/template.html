@@ -105,8 +105,7 @@ body{
 
 /* Two column body. Table layout, because WeasyPrint flexbox and grid are not reliable. */
 .layout{ display:table; width:100%; margin-top:11px; table-layout:fixed; }
-.sidebar{ display:table-cell; width:31%; vertical-align:top; background:var(--rail);
-  border:1px solid var(--rail-line); border-radius:4px; padding:8px 11px 9px; }
+.sidebar{ display:table-cell; width:31%; vertical-align:top; }
 .main{ display:table-cell; vertical-align:top; padding-left:16px; }
 
 /* Section boxes shared by the sidebar, the main column, and the investor band. */
@@ -125,9 +124,9 @@ body{
 .box li::before{ content:""; position:absolute; left:0; top:0.5em; width:3px; height:3px;
   border-radius:50%; background:var(--gold); }
 
-/* Sidebar boxes are separated by thin rules. */
-.sidebar .box{ margin-bottom:6px; padding-top:6px; border-top:1px solid var(--rail-line); }
-.sidebar .box:first-child{ padding-top:0; border-top:0; }
+/* Sidebar boxes are standalone cards on the rail color. */
+.sidebar .box{ background:var(--rail); border:1px solid var(--rail-line);
+  border-radius:4px; padding:8px 11px; margin-bottom:7px; }
 .sidebar .box li{ font-size:7pt; line-height:1.28; }
 
 /* Provenance tags for marking a claim verified or founder stated. */
