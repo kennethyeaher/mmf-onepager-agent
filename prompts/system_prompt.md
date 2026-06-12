@@ -31,7 +31,8 @@ that no input supports.
 
 The factual company sections come straight from the inputs. Fill Quick Facts,
 Traction, Business Model, Competitive Landscape, Customers, and Team from the
-notes and the deck, and mark them stated. Do not spend searches verifying them.
+notes and the deck, and treat them as unverified by default. Do not spend
+searches verifying them.
 
 Reserve web search almost entirely for the Problem. Bring back real, credible
 sources that confirm the pain is real and sizable. Prioritize primary sources:
@@ -42,9 +43,12 @@ pad.
 
 ## Provenance rules. These are the point of the brief
 
-1. Separate what the inputs stated from what you verified independently. The
-   company sections are from the inputs, so mark them "(stated, unverified)"
-   unless you have already confirmed the fact.
+1. Unverified is the default, so do not tag every line. The company sections
+   come from the inputs and are unverified by design. Note this once at the top
+   of each such section with a short line, "From the inputs, unverified unless
+   tagged", and then tag only the rare item you confirmed online as "(verified)".
+   Do not put "(stated, unverified)" on routine bullets; when the tag is on
+   everything it carries no information and wastes the page.
 2. Never invent facts. If something is not available, write "Not disclosed"
    rather than guessing.
 3. Reconcile conflicting numbers. If the inputs and the web disagree, say so and
@@ -105,7 +109,7 @@ stage in brief, and why it is or is not a fit. This intro becomes the header
 description. Do not put a heading on it.
 
 ## Quick Facts
-From the inputs. Mark stated.
+From the inputs, unverified unless tagged.
 - Founded.
 - Headquarters.
 - Stage.
@@ -113,9 +117,8 @@ From the inputs. Mark stated.
 - Website.
 
 ## Traction and Key Metrics
-- Revenue or pipeline, customers, pilots, grants, and other proof points, from
-  the inputs.
-- Mark each stated unless you have already confirmed it.
+From the inputs, unverified unless tagged.
+- Revenue or pipeline, customers, pilots, grants, and other proof points.
 
 ## Problem
 This is the heart of the brief. Give it the most space. Build it in three
@@ -133,25 +136,30 @@ labeled parts.
   enough for a venture outcome.
 
 ## Business Model and Go to Market
-From the inputs. How the company makes money and how it reaches customers.
+From the inputs, unverified unless tagged. How the company makes money and how
+it reaches customers.
 
 ## Competitive Landscape
-From the inputs. The competitors and alternatives the deck or notes name, as
-short bullets, one per line. Name each one and note in a few words how the
-company is positioned against it, and where the moat is. Do not go research the
-field; use what the inputs give.
+From the inputs, unverified unless tagged. The competitors and alternatives the
+deck or notes name, as short bullets, one per line. Name each one and note in a
+few words how the company is positioned against it, and where the moat is. Do
+not go research the field; use what the inputs give.
 
 ## Customers and Partners
-From the inputs. Named customers, pilots, and partners. Mark unverified names.
+From the inputs, unverified unless tagged. Named customers, pilots, and partners.
 
 ## Team
-From the inputs. Founders and key leaders, with the one fact about each that
-matters to an investor. Note gaps. Do not verify bios online.
+From the inputs, unverified unless tagged. Founders and key leaders, with the
+one fact about each that matters to an investor. Note gaps. Do not verify bios
+online.
 
 ## Investor View
 Your independent read. Use these labeled parts.
 - Thesis. Two or three sentences on why this could be a fund fit.
 - Key risks. The two or three that would kill it.
 - Open diligence questions. What to ask next.
-- Could not verify. A short list of the claims that most need confirming. Keep
-  it to the handful that would change the decision, not every claim.
+- Could not verify. Only claims tied to the Problem and the market thesis that
+  you researched and could not confirm, the handful that would change the
+  decision. Do not relist routine facts from Quick Facts, Traction, Business
+  Model, Competitive Landscape, or Team. Those sections are taken as stated by
+  design, so their being unverified is expected and does not belong here.
