@@ -117,6 +117,38 @@ def heading_text(section_html):
     return re.sub(r"<[^>]+>", "", text).strip().lower()
 
 
+def ensure_blank_before_lists(markdown_text):
+    """
+    Insert a blank line before a list that directly follows a text line.
+
+    The sane_lists extension only starts a list when a blank line sits in front
+    of it. The prompt puts a short provenance note on the line right above the
+    bullets, so without this the bullets fold into that note and render as one
+    bunched paragraph. Adding the blank line lets each bullet stand on its own.
+
+    Parameters
+    markdown_text : str
+        The brief body as Markdown.
+
+    Returns
+    text : str
+        The same Markdown with a blank line before any list that followed a non
+        blank line that is not itself a list item.
+    """
+    # A list marker is a dash, star, or plus, or a number then a dot.
+    list_marker = re.compile(r"^\s*([-*+]|\d+\.)\s+")
+
+    out = []
+    # Walk each line. When a list item follows a real text line, drop in a
+    # blank line first so the parser starts a fresh list instead of folding the
+    # bullets into the paragraph above them.
+    for line in markdown_text.splitlines():
+        if list_marker.match(line) and out and out[-1].strip() and not list_marker.match(out[-1]):
+            out.append("")
+        out.append(line)
+    return "\n".join(out)
+
+
 def sort_sections(markdown_text):
     """
     Split the brief into the lead paragraph, sidebar, main, and investor view.
@@ -136,6 +168,8 @@ def sort_sections(markdown_text):
     investor : str
         HTML for the full width investor view box.
     """
+    # Normalize list spacing so bullets that follow a note line still render.
+    markdown_text = ensure_blank_before_lists(markdown_text)
     html_body = md.markdown(markdown_text, extensions=["sane_lists", "tables"])
     pieces = re.split(r"(?=<h2)", html_body)
 
