@@ -66,6 +66,28 @@ def strip_narration(brief):
     return brief
 
 
+def normalize_dashes(brief):
+    """
+    Replace em dashes in the output with commas.
+
+    The model favors the em dash even when the prompt discourages it, and Mike
+    reads the brief cleaner without them. This runs on the finished text so the
+    saved Markdown and the rendered PDF both come out clean from one place. Any
+    spaces around the dash collapse into a single comma and a space. Hyphens
+    and en dashes are left alone.
+
+    Parameters
+    brief : str
+        The finished brief text.
+
+    Returns
+    brief : str
+        The same text with em dashes turned into commas.
+    """
+    # Turn an em dash and any spaces around it into a comma and a space.
+    return re.sub(r"\s*\u2014\s*", ", ", brief)
+
+
 def build_brief(company_name, notes_text, pdf_paths, system_prompt):
     """
     Write the sourcing brief with Claude and web search.
@@ -142,5 +164,7 @@ def build_brief(company_name, notes_text, pdf_paths, system_prompt):
         if getattr(block, "type", None) == "text"
     ).strip()
 
-    # Remove any narration the model wrote before the brief began.
-    return strip_narration(brief)
+    # Remove any narration the model wrote before the brief began, then turn
+    # the model's em dashes into commas for a cleaner read.
+    brief = strip_narration(brief)
+    return normalize_dashes(brief)
