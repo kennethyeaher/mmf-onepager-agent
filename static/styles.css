@@ -633,3 +633,41 @@ button { font-family: inherit; }
   transition: filter .14s;
 }
 .download_btn:hover { filter: brightness(1.06); }
+
+/* attribution card */
+.card.c4 { animation-delay: .26s; }
+.attr_grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.rec_row { margin-top: 22px; }
+.rec_grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; }
+.rec_chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid var(--field_line);
+  background: var(--field_bg);
+  color: var(--ink_soft);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 11px 8px;
+  border-radius: 11px;
+  cursor: pointer;
+  transition: all .12s;
+  text-align: center;
+}
+.rec_chip:hover { border-color: #c8bda9; background: #fbf9f3; }
+.rec_dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.rec_chip[data-rec="advance"] .rec_dot { background: #1f7a4d; }
+.rec_chip[data-rec="track"] .rec_dot { background: #b8860b; }
+.rec_chip[data-rec="partner meeting"] .rec_dot { background: #7a1622; }
+.rec_chip[data-rec="pass"] .rec_dot { background: #9c8f7d; }
+.rec_chip.active { color: #fff; border-color: transparent; }
+.rec_chip.active .rec_dot { background: #fff; }
+.rec_chip[data-rec="advance"].active { background: #1f7a4d; }
+.rec_chip[data-rec="track"].active { background: #b8860b; }
+.rec_chip[data-rec="partner meeting"].active { background: #7a1622; }
+.rec_chip[data-rec="pass"].active { background: #9c8f7d; }
+@media (max-width: 560px) {
+  .attr_grid { grid-template-columns: 1fr; }
+  .rec_grid { grid-template-columns: 1fr 1fr; }
+}
