@@ -95,7 +95,8 @@ Begin with exactly three labeled lines, each on its own line, in this order and
 with these exact keys. These feed the header and footer of the brief.
 
 SECTOR: a two part label in the form "Main - Subsector". The main part must be
-one of: HealthTech, LifeScience, BioTech, Cyber, SaaS, AI, Fintech, DeepTech.
+one of: HealthTech, LifeScience, BioTech, Cyber, SaaS, AI, Fintech, DeepTech,
+Hardware, Marketplace, EdTech, Quantum, Consumer, DefenseTech.
 The subsector is the product area in at most two words, for example "Robotics"
 or "Imaging". Example: HealthTech - Robotics.
 RECOMMENDATION: the recorded decision, not your own verdict. Read it from the
