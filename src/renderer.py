@@ -202,8 +202,37 @@ def sort_sections(markdown_text):
     return description, "".join(sidebar), "".join(main), "".join(investor)
 
 
+def build_prepared_by(prepared_by, analyst):
+    """
+    Build the prepared by line from the two names.
+
+    Joins the preparer and the contributing analyst into one line. When both
+    are blank, the module default is used so the command line keeps its names.
+
+    Parameters
+    prepared_by : str
+        The preparer name, or an empty string.
+    analyst : str
+        The contributing analyst name, or an empty string.
+
+    Returns
+    line : str
+        The prepared by line for the footer.
+    """
+    lead = (prepared_by or "").strip()
+    second = (analyst or "").strip()
+    if lead and second:
+        return f"{lead} and {second}"
+    if lead:
+        return lead
+    if second:
+        return second
+    return PREPARED_BY
+
+
 def render_pdf(markdown_text, company_name, out_dir,
-               template_path=TEMPLATE_PATH, fund_logo=FUND_LOGO_PATH):
+               template_path=TEMPLATE_PATH, fund_logo=FUND_LOGO_PATH,
+               prepared_by=None, analyst=None, recommendation=None):
     """
     Fill the template with the brief and write the branded PDF.
 
@@ -218,6 +247,12 @@ def render_pdf(markdown_text, company_name, out_dir,
         Path to the HTML template.
     fund_logo : str
         Path to the fund logo image.
+    prepared_by : str
+        Preparer name from the form, or None to use the default.
+    analyst : str
+        Contributing analyst name from the form, or None to use the default.
+    recommendation : str
+        Recorded team decision from the form, or None to keep the model's line.
 
     Returns
     pdf_path : Path
@@ -229,6 +264,11 @@ def render_pdf(markdown_text, company_name, out_dir,
     front, body = parse_front_matter(markdown_text)
     description, sidebar, main, investor = sort_sections(body)
 
+    # Let the form values win when supplied, otherwise fall back to the model
+    # output for the recommendation and to the module default for the names.
+    prepared_by_line = build_prepared_by(prepared_by, analyst)
+    recommendation_value = recommendation or front.get("RECOMMENDATION", "Not disclosed")
+
     # Fill every placeholder token in the template.
     filled = (
         template
@@ -237,9 +277,9 @@ def render_pdf(markdown_text, company_name, out_dir,
         .replace("{{DATE}}", datetime.date.today().strftime("%B %d, %Y"))
         .replace("{{COMPANY}}", company_name)
         .replace("{{SECTOR}}", front.get("SECTOR", "Not disclosed"))
-        .replace("{{RECOMMENDATION}}", front.get("RECOMMENDATION", "Not disclosed"))
+        .replace("{{RECOMMENDATION}}", recommendation_value)
         .replace("{{SOURCES}}", front.get("SOURCES", "Not disclosed"))
-        .replace("{{PREPARED_BY}}", PREPARED_BY)
+        .replace("{{PREPARED_BY}}", prepared_by_line)
         .replace("{{DESCRIPTION}}", description)
         .replace("{{SIDEBAR}}", sidebar)
         .replace("{{MAIN}}", main)
