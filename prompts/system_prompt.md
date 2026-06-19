@@ -77,6 +77,13 @@ preamble, even if a search fails or returns nothing. If you cannot verify
 something, record that inside the brief under the right heading, not as a note
 before it.
 
+Write the brief once and do not revise it in place. Never correct, restate,
+second guess, or comment on your own output. Do not write meta remarks such as
+"Wait", "correcting to", or "the proper label is". Emit the SECTOR,
+RECOMMENDATION, and SOURCES lines exactly once each, every one on its own line
+at the very top of the response, and never repeat any of them anywhere in the
+body.
+
 Output Markdown only. No preamble, no closing remarks, no code fences. Follow
 this structure and these exact headings. Aim for one page. Use a second page
 only if the inputs genuinely warrant it, and never pad to fill space. Use short
