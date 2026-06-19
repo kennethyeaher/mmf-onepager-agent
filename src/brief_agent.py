@@ -66,6 +66,46 @@ def strip_narration(brief):
     return brief
 
 
+def build_sector_directive(sector_main, sector_sub):
+    """
+    Build an instruction that pins the SECTOR line to the analyst's choice.
+
+    When the analyst has picked a main label, the model must not reclassify the
+    company. If a subsector is also given, both parts are fixed. If only the
+    main label is given, the model fills a fitting subsector. When nothing is
+    picked, this returns an empty string and the model classifies on its own.
+
+    Parameters
+    sector_main : str
+        The main sector label chosen by the analyst, or an empty string.
+    sector_sub : str
+        The subsector text chosen by the analyst, or an empty string.
+
+    Returns
+    directive : str
+        Extra system prompt text, or an empty string when nothing is pinned.
+    """
+    main = (sector_main or "").strip()
+    if not main:
+        return ""
+    sub = (sector_sub or "").strip()
+    # Pin both parts when a subsector is supplied.
+    if sub:
+        return (
+            "\n\n## Sector is pre assigned\n"
+            "The analyst has already classified this company. Use this exact "
+            "SECTOR line and do not reclassify or change it:\n"
+            f"SECTOR: {main} - {sub}\n"
+        )
+    # Pin the main label and let the model choose a fitting subsector.
+    return (
+        "\n\n## Sector main is pre assigned\n"
+        f"The analyst has set the main sector to {main}. Use exactly this main "
+        "label and do not change it. Choose a fitting subsector of one or two "
+        f"words. Emit the line as: SECTOR: {main} - <subsector>\n"
+    )
+
+
 def normalize_dashes(brief):
     """
     Replace em dashes in the output with commas.
@@ -88,7 +128,7 @@ def normalize_dashes(brief):
     return re.sub(r"\s*\u2014\s*", ", ", brief)
 
 
-def build_brief(company_name, notes_text, pdf_paths, system_prompt):
+def build_brief(company_name, notes_text, pdf_paths, system_prompt, sector_main=None, sector_sub=None):
     """
     Write the sourcing brief with Claude and web search.
 
@@ -111,6 +151,9 @@ def build_brief(company_name, notes_text, pdf_paths, system_prompt):
         The one page brief as Markdown, starting at the SECTOR line.
     """
     client = Anthropic()
+
+    # Pin the sector when the analyst picked one, otherwise the model decides.
+    system_prompt = system_prompt + build_sector_directive(sector_main, sector_sub)
 
     # Build the content list. Text notes come first as a single block, then
     # each PDF follows as a native document block so the model reads it whole.
