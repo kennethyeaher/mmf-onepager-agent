@@ -576,3 +576,19 @@ button { font-family: inherit; }
   box-shadow: 0 0 0 3px rgba(122,22,34,0.10);
   background: #fff;
 }
+
+/* secondary button and top bar actions */
+.topbar_actions { display: flex; align-items: center; gap: 10px; }
+.btn_secondary {
+  border: 1px solid var(--field_line);
+  background: #fff;
+  color: var(--ink_soft);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all .14s;
+  animation: mmf_up .55s .04s both;
+}
+.btn_secondary:hover { border-color: #c8bda9; background: #fbf9f3; }
