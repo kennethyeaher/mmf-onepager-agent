@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MMF Sourcing Brief Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="grain"></div>
+  <div class="app">
+
+    <!-- sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar_rule"></div>
+      <div class="brand">
+        <div class="brand_logo"><img src="/logo.png" alt="Maryland Momentum Fund"></div>
+        <div class="brand_name"><span>Maryland</span><span>Momentum Fund</span></div>
+      </div>
+
+      <nav class="nav">
+        <div class="nav_label">Workspace</div>
+        <div class="nav_item active"><span class="nav_dot"></span> New Brief</div>
+        <div class="nav_item"><span class="nav_dot"></span> Brief Library</div>
+        <div class="nav_item"><span class="nav_dot"></span> Pipeline</div>
+      </nav>
+
+      <div class="recent">
+        <div class="nav_label">Recent</div>
+        <div class="recent_empty">Generated briefs will show up here.</div>
+      </div>
+
+      <div class="user">
+        <div class="user_badge">MR</div>
+        <div>
+          <div class="user_name">Michael Ravenscroft</div>
+          <div class="user_role">Managing Director</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- main -->
+    <main class="main">
+      <div class="topbar">
+        <div class="topbar_head">
+          <div class="eyebrow"><span class="eyebrow_tick"></span> Deal Sourcing</div>
+          <h1>New Sourcing Brief</h1>
+        </div>
+        <button id="generate_btn" class="btn_primary" type="button">
+          <span class="star">&#10022;</span>
+          <span id="generate_label">Generate brief</span>
+          <span class="kbd">&#8984;&#8629;</span>
+        </button>
+      </div>
+
+      <div class="grid">
+
+        <!-- form column -->
+        <div class="form_col">
+
+          <!-- 01 company -->
+          <section class="card c1">
+            <div class="card_head ruled">
+              <span class="card_num">01</span>
+              <h2 class="card_title">Company</h2>
+              <span class="card_aside">Identity</span>
+            </div>
+            <label class="field">
+              <span class="field_label">Company name</span>
+              <input id="company" class="input" type="text" placeholder="Inception Robotics" autocomplete="off">
+            </label>
+          </section>
+
+          <!-- 02 notes -->
+          <section class="card c2">
+            <div class="card_head">
+              <span class="card_num">02</span>
+              <h2 class="card_title">Call and CRM notes</h2>
+            </div>
+            <p class="card_sub">Paste raw notes from sourcing calls and your CRM. The agent extracts facts, flags unverified claims, and structures the brief.</p>
+            <div class="notes_wrap">
+              <textarea id="notes" class="textarea" placeholder="Paste call notes, CRM context, founder emails"></textarea>
+              <div id="charcount" class="charcount">0 chars</div>
+            </div>
+          </section>
+
+          <!-- 03 data room -->
+          <section class="card c3">
+            <div class="card_head">
+              <span class="card_num">03</span>
+              <h2 class="card_title">Data room</h2>
+              <span id="file_summary" class="card_aside">no file</span>
+            </div>
+            <p class="card_sub">Attach a pitch deck or memo as a PDF. Office files are not read, export them to PDF first.</p>
+
+            <div id="dropzone" class="dropzone">
+              <div class="dropzone_icon">&#8593;</div>
+              <div class="dropzone_main">Drop a PDF or <span class="link">browse</span></div>
+              <div class="dropzone_hint">PDF only, up to 50 MB</div>
+            </div>
+            <input id="deck_input" type="file" accept="application/pdf" class="hidden">
+
+            <div id="file_list" class="file_list"></div>
+          </section>
+
+        </div>
+
+        <!-- preview column -->
+        <div class="preview_col">
+          <div class="preview_head">
+            <span class="eyebrow"><span class="eyebrow_tick"></span> Output preview</span>
+            <span id="preview_meta" class="preview_meta">draft</span>
+          </div>
+
+          <div class="doc_card">
+            <div class="doc_rule"></div>
+            <div class="doc_header">
+              <div class="doc_brandline">
+                <img src="/logo.png" alt="">
+                <span>Maryland Momentum Fund &middot; Investment Sourcing Brief</span>
+              </div>
+              <div id="doc_name" class="doc_name">Company name</div>
+              <div id="doc_sector" class="doc_sector">SECTOR TBD</div>
+            </div>
+
+            <!-- idle -->
+            <div id="state_idle" class="doc_body">
+              <div class="skeleton_lines">
+                <div class="skeleton_line" style="width:100%"></div>
+                <div class="skeleton_line" style="width:94%"></div>
+                <div class="skeleton_line" style="width:86%"></div>
+              </div>
+              <div class="skeleton_blocks">
+                <div class="skeleton_block"></div>
+                <div class="skeleton_block"></div>
+              </div>
+              <div class="skeleton_note"><span class="dot"></span> Generate to populate this brief</div>
+            </div>
+
+            <!-- working -->
+            <div id="state_working" class="doc_body hidden">
+              <div class="working_bar"><i></i></div>
+              <div class="working_label">Synthesizing brief. This can take up to 90 seconds.</div>
+            </div>
+
+            <!-- error -->
+            <div id="state_error" class="doc_body hidden">
+              <p id="error_text" class="error_box"></p>
+            </div>
+
+            <!-- done -->
+            <div id="state_done" class="hidden">
+              <embed id="pdf_embed" class="embed_frame" type="application/pdf">
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
