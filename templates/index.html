@@ -70,6 +70,31 @@
               <span class="field_label">Company name</span>
               <input id="company" class="input" type="text" placeholder="Inception Robotics" autocomplete="off">
             </label>
+
+            <div class="sector_row">
+              <div class="sector_head">
+                <span class="sector_label">Sector</span>
+                <span id="sector_count" class="sector_count">none selected</span>
+              </div>
+              <div id="sector_chips" class="chips">
+                <button class="chip" type="button" data-sector="HealthTech">HealthTech</button>
+                <button class="chip" type="button" data-sector="LifeScience">LifeScience</button>
+                <button class="chip" type="button" data-sector="BioTech">BioTech</button>
+                <button class="chip" type="button" data-sector="Cyber">Cyber</button>
+                <button class="chip" type="button" data-sector="SaaS">SaaS</button>
+                <button class="chip" type="button" data-sector="AI">AI</button>
+                <button class="chip" type="button" data-sector="Fintech">Fintech</button>
+                <button class="chip" type="button" data-sector="DeepTech">DeepTech</button>
+              </div>
+            </div>
+
+            <div class="subsector_row">
+              <div class="subsector_head">
+                <span class="sector_label">Sub-sector</span>
+                <span class="subsector_hint">optional, the specific niche</span>
+              </div>
+              <input id="sector_sub" class="sub_input" type="text" placeholder="e.g. DOOH Advertising" autocomplete="off">
+            </div>
           </section>
 
           <!-- 02 notes -->
