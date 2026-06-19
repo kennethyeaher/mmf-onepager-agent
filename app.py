@@ -121,6 +121,9 @@ def generate():
     notes = (request.form.get("notes") or "").strip()
     sector_main = (request.form.get("sector_main") or "").strip()
     sector_sub = (request.form.get("sector_sub") or "").strip()
+    prepared_by = (request.form.get("prepared_by") or "").strip()
+    analyst = (request.form.get("analyst") or "").strip()
+    recommendation = (request.form.get("recommendation") or "").strip()
     deck = request.files.get("deck")
 
     if not company_name:
@@ -144,7 +147,14 @@ def generate():
         system_prompt = Path(PROMPT_PATH).read_text(encoding="utf-8")
         brief = brief_agent.build_brief(company_name, notes_text, pdf_paths, system_prompt, sector_main, sector_sub)
         save_markdown(company_name, brief, OUTPUT_DIR)
-        pdf_path = renderer.render_pdf(brief, company_name, OUTPUT_DIR)
+        # Record the picked decision as a team decision, or leave the
+        # recommendation to the model when nothing was picked.
+        recommendation_label = f"{recommendation.capitalize()} (team)" if recommendation else ""
+        pdf_path = renderer.render_pdf(
+            brief, company_name, OUTPUT_DIR,
+            prepared_by=prepared_by, analyst=analyst,
+            recommendation=recommendation_label,
+        )
         # Name the response so the browser saves it like the command line does,
         # for example Activate_onepager.pdf instead of a generic Unknown name.
         return send_file(str(pdf_path), as_attachment=False, download_name=pdf_path.name)
