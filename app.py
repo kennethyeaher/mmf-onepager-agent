@@ -119,6 +119,8 @@ def generate():
     # Read the form fields. The deck file is optional.
     company_name = (request.form.get("company") or "").strip()
     notes = (request.form.get("notes") or "").strip()
+    sector_main = (request.form.get("sector_main") or "").strip()
+    sector_sub = (request.form.get("sector_sub") or "").strip()
     deck = request.files.get("deck")
 
     if not company_name:
@@ -140,7 +142,7 @@ def generate():
     # short message instead of a stack trace in the browser.
     try:
         system_prompt = Path(PROMPT_PATH).read_text(encoding="utf-8")
-        brief = brief_agent.build_brief(company_name, notes_text, pdf_paths, system_prompt)
+        brief = brief_agent.build_brief(company_name, notes_text, pdf_paths, system_prompt, sector_main, sector_sub)
         save_markdown(company_name, brief, OUTPUT_DIR)
         pdf_path = renderer.render_pdf(brief, company_name, OUTPUT_DIR)
         return send_file(str(pdf_path), as_attachment=False)
