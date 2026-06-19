@@ -31,6 +31,11 @@ shows a working state, and renders the returned PDF inline in the preview pane.
   var errorTextEl = document.getElementById("error_text");
   var pdfEmbed = document.getElementById("pdf_embed");
   var downloadBtn = document.getElementById("download_btn");
+  var preparedByEl = document.getElementById("prepared_by");
+  var analystEl = document.getElementById("analyst");
+  var recGridEl = document.getElementById("rec_grid");
+  var recCountEl = document.getElementById("rec_count");
+  var selectedRec = "";
 
   // Sector picker elements.
   var sectorChipsEl = document.getElementById("sector_chips");
@@ -43,6 +48,8 @@ shows a working state, and renders the returned PDF inline in the preview pane.
   var attachedFile = null;
   var lastObjectUrl = null;
   var lastFileName = "brief.pdf";
+  var defaultPreparedBy = preparedByEl.value;
+  var defaultAnalyst = analystEl.value;
 
   // Live character count under the notes box.
   function updateCharCount() {
@@ -85,6 +92,23 @@ shows a working state, and renders the returned PDF inline in the preview pane.
     });
   });
   sectorSubEl.addEventListener("input", updateSectorPreview);
+
+  // Single select chips for the recorded recommendation.
+  Array.prototype.forEach.call(recGridEl.querySelectorAll(".rec_chip"), function (chip) {
+    chip.addEventListener("click", function () {
+      var val = chip.getAttribute("data-rec");
+      if (selectedRec === val) {
+        selectedRec = "";
+        chip.classList.remove("active");
+      } else {
+        selectedRec = val;
+        Array.prototype.forEach.call(recGridEl.querySelectorAll(".rec_chip"), function (c) {
+          c.classList.toggle("active", c === chip);
+        });
+      }
+      recCountEl.textContent = selectedRec ? selectedRec + " (team)" : "no decision recorded";
+    });
+  });
 
   // Render the attached file row, or clear it when there is no file.
   function renderFile() {
@@ -218,6 +242,9 @@ shows a working state, and renders the returned PDF inline in the preview pane.
     if (attachedFile) { form.append("deck", attachedFile); }
     form.append("sector_main", selectedMain);
     form.append("sector_sub", sectorSubEl.value.trim());
+    form.append("prepared_by", preparedByEl.value.trim());
+    form.append("analyst", analystEl.value.trim());
+    form.append("recommendation", selectedRec);
 
     fetch("/generate", { method: "POST", body: form })
       .then(function (response) {
@@ -278,6 +305,13 @@ shows a working state, and renders the returned PDF inline in the preview pane.
       c.classList.remove("active");
     });
     sectorCountEl.textContent = "none selected";
+    preparedByEl.value = defaultPreparedBy;
+    analystEl.value = defaultAnalyst;
+    selectedRec = "";
+    Array.prototype.forEach.call(recGridEl.querySelectorAll(".rec_chip"), function (c) {
+      c.classList.remove("active");
+    });
+    recCountEl.textContent = "no decision recorded";
     attachedFile = null;
     deckInputEl.value = "";
     renderFile();
