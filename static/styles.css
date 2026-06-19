@@ -592,3 +592,44 @@ button { font-family: inherit; }
   animation: mmf_up .55s .04s both;
 }
 .btn_secondary:hover { border-color: #c8bda9; background: #fbf9f3; }
+
+/* done state actions in the preview pane */
+.done_bar {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 16px 24px 4px;
+}
+.done_check {
+  width: 30px;
+  height: 30px;
+  flex: none;
+  border-radius: 50%;
+  background: #e8f3ec;
+  color: var(--green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+}
+.done_title { font-size: 13px; font-weight: 600; color: #2c2620; }
+.done_sub { font-size: 11.5px; color: #9c8f7d; }
+.download_btn {
+  margin: 12px 24px 4px;
+  width: calc(100% - 48px);
+  border: none;
+  background: var(--maroon);
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 12px;
+  border-radius: 11px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  box-shadow: 0 6px 18px -8px rgba(122,22,34,0.6);
+  transition: filter .14s;
+}
+.download_btn:hover { filter: brightness(1.06); }
