@@ -145,7 +145,9 @@ def generate():
         brief = brief_agent.build_brief(company_name, notes_text, pdf_paths, system_prompt, sector_main, sector_sub)
         save_markdown(company_name, brief, OUTPUT_DIR)
         pdf_path = renderer.render_pdf(brief, company_name, OUTPUT_DIR)
-        return send_file(str(pdf_path), as_attachment=False)
+        # Name the response so the browser saves it like the command line does,
+        # for example Activate_onepager.pdf instead of a generic Unknown name.
+        return send_file(str(pdf_path), as_attachment=False, download_name=pdf_path.name)
     except Exception as error:
         return f"Generation failed: {error!r}", 500
     finally:
