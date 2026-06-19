@@ -30,6 +30,13 @@ shows a working state, and renders the returned PDF inline in the preview pane.
   var errorTextEl = document.getElementById("error_text");
   var pdfEmbed = document.getElementById("pdf_embed");
 
+  // Sector picker elements.
+  var sectorChipsEl = document.getElementById("sector_chips");
+  var sectorCountEl = document.getElementById("sector_count");
+  var sectorSubEl = document.getElementById("sector_sub");
+  var docSectorEl = document.getElementById("doc_sector");
+  var selectedMain = "";
+
   // Track the one attached file and the current object url so it can be freed.
   var attachedFile = null;
   var lastObjectUrl = null;
@@ -47,6 +54,34 @@ shows a working state, and renders the returned PDF inline in the preview pane.
     docNameEl.textContent = name || "Company name";
   }
   companyEl.addEventListener("input", updateDocName);
+
+  // Reflect the picked sector in the preview header.
+  function updateSectorPreview() {
+    var sub = sectorSubEl.value.trim();
+    if (!selectedMain) { docSectorEl.textContent = "SECTOR TBD"; return; }
+    docSectorEl.textContent = sub
+      ? selectedMain.toUpperCase() + " - " + sub.toUpperCase()
+      : selectedMain.toUpperCase();
+  }
+
+  // Single select chips for the main sector label.
+  Array.prototype.forEach.call(sectorChipsEl.querySelectorAll(".chip"), function (chip) {
+    chip.addEventListener("click", function () {
+      var val = chip.getAttribute("data-sector");
+      if (selectedMain === val) {
+        selectedMain = "";
+        chip.classList.remove("active");
+      } else {
+        selectedMain = val;
+        Array.prototype.forEach.call(sectorChipsEl.querySelectorAll(".chip"), function (c) {
+          c.classList.toggle("active", c === chip);
+        });
+      }
+      sectorCountEl.textContent = selectedMain ? "1 selected" : "none selected";
+      updateSectorPreview();
+    });
+  });
+  sectorSubEl.addEventListener("input", updateSectorPreview);
 
   // Render the attached file row, or clear it when there is no file.
   function renderFile() {
@@ -178,6 +213,8 @@ shows a working state, and renders the returned PDF inline in the preview pane.
     form.append("company", company);
     form.append("notes", notesEl.value);
     if (attachedFile) { form.append("deck", attachedFile); }
+    form.append("sector_main", selectedMain);
+    form.append("sector_sub", sectorSubEl.value.trim());
 
     fetch("/generate", { method: "POST", body: form })
       .then(function (response) {
@@ -222,5 +259,6 @@ shows a working state, and renders the returned PDF inline in the preview pane.
   updateCharCount();
   updateDocName();
   renderFile();
+  updateSectorPreview();
   showState("idle");
 })();
