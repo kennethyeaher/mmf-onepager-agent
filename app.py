@@ -37,9 +37,10 @@ load_dotenv()
 app = Flask(__name__)
 
 
-# The single page form. Kept inline so the web layer stays one file. The submit
-# handler disables the button and shows a waiting line, since a brief takes up
-# to 90 seconds while the agent searches the web.
+# The single page form. Kept inline so the web layer stays one file. The form
+# posts to a new tab so the PDF opens there and this form tab survives. The
+# submit handler shows a spinner and a waiting line and blocks a double submit.
+# When this tab regains focus the form resets so another brief can be run.
 FORM_HTML = """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -58,13 +59,18 @@ FORM_HTML = """<!DOCTYPE html>
          border-radius: 4px; padding: 10px 20px; font-size: 15px; cursor: pointer; }
   button:disabled { background: #999; cursor: default; }
   .note { color: #6E665B; font-size: 13px; margin-top: 12px; }
+  .spinner { display: none; width: 16px; height: 16px; vertical-align: middle;
+         margin-right: 8px; border: 2px solid #D8D0C0; border-top-color: #7C1D2B;
+         border-radius: 50%; animation: spin 0.8s linear infinite; }
+  .spinner.on { display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
   <h1>Maryland Momentum Fund</h1>
   <p class="sub">Investment Sourcing Brief generator</p>
 
-  <form method="post" action="/generate" enctype="multipart/form-data" onsubmit="onGenerate()">
+  <form method="post" action="/generate" enctype="multipart/form-data" target="_blank" onsubmit="onGenerate()">
     <label for="company">Company name</label>
     <input type="text" id="company" name="company" placeholder="Inception Robotics" required>
 
@@ -75,17 +81,42 @@ FORM_HTML = """<!DOCTYPE html>
     <input type="file" id="deck" name="deck" accept="application/pdf">
 
     <button id="go" type="submit">Generate brief</button>
-    <p class="note" id="status"></p>
+    <p class="note"><span class="spinner" id="spin"></span><span id="status"></span></p>
   </form>
 
   <script>
-    // Show a waiting message and block a double submit while the brief runs.
+    // Show a spinner and a waiting message and block a double submit while the
+    // brief runs. The PDF opens in a new tab, so this tab keeps the form.
     function onGenerate() {
       document.getElementById("go").disabled = true;
       document.getElementById("go").textContent = "Generating...";
+      document.getElementById("spin").classList.add("on");
       document.getElementById("status").textContent =
-        "Working. This can take up to 90 seconds. The PDF will open when it is ready.";
+        "Working. This can take up to 90 seconds. The PDF opens in a new tab when it is ready.";
     }
+
+    // Reset the form when this tab regains focus so another brief can be run.
+    // Generation finishes in the new tab, so returning here is the signal to
+    // enable the button again and clear the waiting state.
+    function resetForm() {
+      var go = document.getElementById("go");
+      if (!go.disabled) {
+        return;
+      }
+      go.disabled = false;
+      go.textContent = "Generate brief";
+      document.getElementById("spin").classList.remove("on");
+      document.getElementById("status").textContent = "";
+    }
+
+    // Listen for both window focus and tab visibility so the reset fires
+    // whether the user switches tabs or switches windows.
+    window.addEventListener("focus", resetForm);
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "visible") {
+        resetForm();
+      }
+    });
   </script>
 </body>
 </html>"""
