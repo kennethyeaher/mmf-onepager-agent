@@ -30,6 +30,7 @@ shows a working state, and renders the returned PDF inline in the preview pane.
   var stateDone = document.getElementById("state_done");
   var errorTextEl = document.getElementById("error_text");
   var pdfEmbed = document.getElementById("pdf_embed");
+  var downloadBtn = document.getElementById("download_btn");
 
   // Sector picker elements.
   var sectorChipsEl = document.getElementById("sector_chips");
@@ -41,6 +42,7 @@ shows a working state, and renders the returned PDF inline in the preview pane.
   // Track the one attached file and the current object url so it can be freed.
   var attachedFile = null;
   var lastObjectUrl = null;
+  var lastFileName = "brief.pdf";
 
   // Live character count under the notes box.
   function updateCharCount() {
@@ -224,6 +226,7 @@ shows a working state, and renders the returned PDF inline in the preview pane.
             throw new Error(stripTags(text) || ("Request failed with status " + response.status));
           });
         }
+        lastFileName = filenameFromResponse(response) || (company.replace(/[^A-Za-z0-9]+/g, "_") + "_onepager.pdf");
         return response.blob();
       })
       .then(function (blob) {
@@ -238,6 +241,25 @@ shows a working state, and renders the returned PDF inline in the preview pane.
         showError(error.message || "Something went wrong generating the brief.");
       });
   }
+
+  // Pull the saved filename out of the content disposition header.
+  function filenameFromResponse(response) {
+    var header = response.headers.get("Content-Disposition") || "";
+    var match = /filename="?([^"]+)"?/.exec(header);
+    return match ? match[1] : "";
+  }
+
+  // Save the generated PDF with its real name through a temporary link.
+  function downloadPdf() {
+    if (!lastObjectUrl) { return; }
+    var a = document.createElement("a");
+    a.href = lastObjectUrl;
+    a.download = lastFileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+  downloadBtn.addEventListener("click", downloadPdf);
 
   // Turn a short html error page from the server into plain text.
   function stripTags(html) {
