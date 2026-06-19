@@ -20,6 +20,7 @@ shows a working state, and renders the returned PDF inline in the preview pane.
   var fileListEl = document.getElementById("file_list");
   var generateBtn = document.getElementById("generate_btn");
   var generateLabel = document.getElementById("generate_label");
+  var clearBtn = document.getElementById("clear_btn");
 
   var docNameEl = document.getElementById("doc_name");
   var previewMetaEl = document.getElementById("preview_meta");
@@ -244,6 +245,28 @@ shows a working state, and renders the returned PDF inline in the preview pane.
     tmp.innerHTML = html;
     return (tmp.textContent || "").trim();
   }
+
+  // Reset every input so a new company can be entered from scratch.
+  function clearAll() {
+    companyEl.value = "";
+    notesEl.value = "";
+    sectorSubEl.value = "";
+    selectedMain = "";
+    Array.prototype.forEach.call(sectorChipsEl.querySelectorAll(".chip"), function (c) {
+      c.classList.remove("active");
+    });
+    sectorCountEl.textContent = "none selected";
+    attachedFile = null;
+    deckInputEl.value = "";
+    renderFile();
+    updateCharCount();
+    updateDocName();
+    updateSectorPreview();
+    previewMetaEl.textContent = "draft";
+    showState("idle");
+    companyEl.focus();
+  }
+  clearBtn.addEventListener("click", clearAll);
 
   generateBtn.addEventListener("click", generate);
 
