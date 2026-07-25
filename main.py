@@ -65,24 +65,43 @@ def read_inputs(folder):
 
     note_blocks = []
     pdf_paths = []
+    read_names = []
+    skipped = []
 
     # Walk the folder in name order so runs are repeatable.
     for item in sorted(input_dir.iterdir()):
         if not item.is_file():
             continue
-        suffix = item.suffix.lower()
+        # Strip the suffix so a stray trailing space in a file name, for
+        # example "call_notes.md ", still classifies as a note instead of
+        # falling through to the skipped branch and vanishing from the brief.
+        suffix = item.suffix.strip().lower()
 
         # Read text and Markdown inline, labeled by file name.
         if suffix in TEXT_TYPES:
             text = item.read_text(encoding="utf-8").strip()
             if text:
                 note_blocks.append(f"--- {item.name} ---\n{text}")
+                read_names.append(item.name)
+            else:
+                # An empty file is worth naming, since it reads as no content.
+                skipped.append(f"{item.name} (empty)")
         # Collect PDFs to send as document blocks.
         elif suffix == PDF_TYPE:
             pdf_paths.append(item)
+            read_names.append(item.name)
         # Skip anything else so an unsupported file does not break the run.
         else:
-            print(f"   Skipping unsupported file: {item.name}")
+            skipped.append(f"{item.name} (unsupported)")
+
+    # Print a plain read and skipped summary so an empty notes set is never
+    # invisible. If nothing was read, say so loudly rather than proceed quietly.
+    if read_names:
+        print(f"-> Read {len(read_names)} file(s): {', '.join(read_names)}")
+    else:
+        print("-> WARNING read 0 input files. The brief will have no grounding.")
+    if skipped:
+        print(f"-> Skipped {len(skipped)} file(s): {', '.join(skipped)}")
 
     notes_text = "\n\n".join(note_blocks)
     return notes_text, pdf_paths
@@ -130,9 +149,6 @@ def run_pipeline(company_name, inputs_folder, prompt_path):
     # Load the prompt and the company inputs.
     system_prompt = Path(prompt_path).read_text(encoding="utf-8")
     notes_text, pdf_paths = read_inputs(inputs_folder)
-    note_count = len(notes_text.split("---")) - 1 if notes_text else 0
-    print(f"-> Read {note_count} note file(s) and {len(pdf_paths)} PDF(s) "
-          f"from {inputs_folder}")
 
     # Write the brief with Claude and web search.
     print("-> Running Claude with web search. This can take 30 to 90 seconds...")
