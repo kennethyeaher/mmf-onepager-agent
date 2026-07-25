@@ -671,3 +671,104 @@ button { font-family: inherit; }
   .attr_grid { grid-template-columns: 1fr; }
   .rec_grid { grid-template-columns: 1fr 1fr; }
 }
+
+/* recent list in the sidebar */
+.recent_item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 9px 13px;
+  border-radius: 9px;
+  transition: background .14s;
+}
+.recent_item:hover { background: rgba(255,255,255,0.07); }
+.recent_name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--side_text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.recent_sub {
+  font-size: 11px;
+  color: var(--side_muted);
+  margin-top: 2px;
+}
+
+/* brief library view in the main column */
+.library_col { padding: 36px 44px 72px; max-width: 900px; animation: mmf_up .5s both; }
+.library_head { margin-bottom: 24px; }
+.library_title {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 24px;
+  margin: 4px 0 0;
+  color: #2a1115;
+  letter-spacing: 0.2px;
+}
+.library_count { font-size: 12px; color: var(--muted); margin-top: 6px; }
+.library_list { display: flex; flex-direction: column; gap: 12px; }
+.library_row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  padding: 16px 20px;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: box-shadow .18s, border-color .18s;
+  animation: mmf_fade .3s both;
+}
+.library_row:hover {
+  border-color: var(--gold_rule);
+  box-shadow: 0 14px 36px -26px rgba(40,20,8,0.5);
+}
+.library_mark {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 10px;
+  background: #f3ece0;
+  color: var(--maroon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 16px;
+}
+.library_meta { flex: 1; min-width: 0; }
+.library_name {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 600;
+  color: #2a1115;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.library_sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+.library_rec {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  flex: none;
+  color: var(--ink_soft);
+  background: #f3ece0;
+}
+.library_empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.6;
+}
