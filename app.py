@@ -22,7 +22,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from flask import Flask, request, send_file, render_template
 
-from src import brief_agent, renderer
+from src import brief_agent, library, renderer
 
 # Resolve paths from the package root so the tool runs from any directory.
 BASE_DIR = Path(__file__).resolve().parent
@@ -155,6 +155,11 @@ def generate():
             prepared_by=prepared_by, analyst=analyst,
             recommendation=recommendation_label,
         )
+        # Record the brief in the library index so it shows in recent and the
+        # library. The sector shown is the one picked, or the one the model
+        # wrote when nothing was picked, read back off the brief front matter.
+        sector_label = sector_display(sector_main, sector_sub, brief)
+        library.record_brief(OUTPUT_DIR, pdf_path, company_name, sector_label, recommendation_label)
         # Name the response so the browser saves it like the command line does,
         # for example Activate_onepager.pdf instead of a generic Unknown name.
         return send_file(str(pdf_path), as_attachment=False, download_name=pdf_path.name)
@@ -164,6 +169,75 @@ def generate():
         # Remove the temp deck file whether or not the run succeeded.
         if temp_pdf is not None:
             Path(temp_pdf.name).unlink(missing_ok=True)
+
+
+def sector_display(sector_main, sector_sub, brief):
+    """
+    Build the sector label to store in the library index.
+
+    Uses the picked main and sub labels when a main was chosen. When nothing
+    was picked, reads the SECTOR line the model wrote off the top of the brief
+    so the library row matches what the PDF shows.
+
+    Parameters
+    sector_main : str
+        The picked main sector, or an empty string.
+    sector_sub : str
+        The picked sub sector, or an empty string.
+    brief : str
+        The generated brief markdown, used as the fallback source.
+
+    Returns
+    label : str
+        The sector label for the index.
+    """
+    # A picked main label wins, joined with the sub label when one was given.
+    if sector_main:
+        return f"{sector_main} - {sector_sub}" if sector_sub else sector_main
+
+    # Nothing was picked, so recover the model's own SECTOR line if present.
+    match = re.search(r"^SECTOR:\s*(.+)$", brief, re.MULTILINE)
+    return match.group(1).strip() if match else ""
+
+
+@app.route("/briefs")
+def briefs():
+    """
+    Return the saved briefs as json, newest first.
+
+    Backs the recent list in the sidebar and the brief library view. Reads the
+    output folder through the library module so the list always matches the
+    files on disk.
+
+    Parameters
+    none
+
+    Returns
+    response
+        A json list of brief entries.
+    """
+    return {"briefs": library.list_briefs(OUTPUT_DIR)}
+
+
+@app.route("/briefs/<name>")
+def brief_file(name):
+    """
+    Serve one saved brief PDF for viewing in the browser.
+
+    Parameters
+    name : str
+        The PDF file name from the library list.
+
+    Returns
+    response
+        The PDF file, or a short message when it is missing or unsafe.
+    """
+    # Resolve the requested name inside the output folder and refuse anything
+    # that points outside it, so a crafted name cannot read other files.
+    target = (OUTPUT_DIR / name).resolve()
+    if OUTPUT_DIR.resolve() not in target.parents or not target.exists():
+        return "Not found.", 404
+    return send_file(str(target), as_attachment=False, download_name=target.name)
 
 
 # Bind to localhost only so the page is reachable from this machine and not the
