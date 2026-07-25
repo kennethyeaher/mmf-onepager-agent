@@ -23,12 +23,15 @@
 
      <nav class="nav">
         <div class="nav_label">Workspace</div>
-        <div class="nav_item active"><span class="nav_dot"></span> New Brief</div>
+        <div class="nav_item active" data-view="new"><span class="nav_dot"></span> New Brief</div>
+        <div class="nav_item" data-view="library"><span class="nav_dot"></span> Brief Library</div>
       </nav>
 
       <div class="recent">
         <div class="nav_label">Recent</div>
-        <div class="recent_empty">Generated briefs will show up here.</div>
+        <div id="recent_list">
+          <div class="recent_empty">Generated briefs will show up here.</div>
+        </div>
       </div>
 
       <div class="user">
@@ -57,7 +60,7 @@
         </div>
       </div>
 
-      <div class="grid">
+      <div id="view_new" class="grid">
 
         <!-- form column -->
         <div class="form_col">
@@ -230,6 +233,32 @@
           </div>
         </div>
 
+      </div>
+
+      <!-- library view, hidden until the library nav is selected -->
+      <div id="view_library" class="library_col hidden">
+        <div class="library_head">
+          <div class="eyebrow"><span class="eyebrow_tick"></span> Saved work</div>
+          <h1 class="library_title">Brief Library</h1>
+          <div id="library_count" class="library_count">Loading briefs.</div>
+        </div>
+        <div id="library_list" class="library_list"></div>
+        <div id="library_empty" class="library_empty hidden">
+          No briefs saved yet. Generate one from the New Brief tab and it will appear here.
+        </div>
+      </div>
+
+      <!-- library view, hidden until the library nav is selected -->
+      <div id="view_library" class="library_col hidden">
+        <div class="library_head">
+          <div class="eyebrow"><span class="eyebrow_tick"></span> Saved work</div>
+          <h1 class="library_title">Brief Library</h1>
+          <div id="library_count" class="library_count">Loading briefs.</div>
+        </div>
+        <div id="library_list" class="library_list"></div>
+        <div id="library_empty" class="library_empty hidden">
+          No briefs saved yet. Generate one from the New Brief tab and it will appear here.
+        </div>
       </div>
     </main>
   </div>
