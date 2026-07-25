@@ -37,6 +37,15 @@ shows a working state, and renders the returned PDF inline in the preview pane.
   var recCountEl = document.getElementById("rec_count");
   var selectedRec = "";
 
+  // Library and nav elements.
+  var navItems = document.querySelectorAll(".nav_item");
+  var viewNew = document.getElementById("view_new");
+  var viewLibrary = document.getElementById("view_library");
+  var recentListEl = document.getElementById("recent_list");
+  var libraryListEl = document.getElementById("library_list");
+  var libraryCountEl = document.getElementById("library_count");
+  var libraryEmptyEl = document.getElementById("library_empty");
+
   // Sector picker elements.
   var sectorChipsEl = document.getElementById("sector_chips");
   var sectorCountEl = document.getElementById("sector_count");
@@ -263,6 +272,8 @@ shows a working state, and renders the returned PDF inline in the preview pane.
         previewMetaEl.textContent = "2 page PDF";
         showState("done");
         setBusy(false);
+        // Refresh the recent list so the brief just made shows immediately.
+        loadBriefs();
       })
       .catch(function (error) {
         showError(error.message || "Something went wrong generating the brief.");
@@ -326,6 +337,130 @@ shows a working state, and renders the returned PDF inline in the preview pane.
 
   generateBtn.addEventListener("click", generate);
 
+  // Open a saved brief PDF in a new tab for full scroll and zoom.
+  function openBrief(fileName) {
+    window.open("/briefs/" + encodeURIComponent(fileName), "_blank");
+  }
+
+  // Build one recent row for the sidebar.
+  function recentRow(brief) {
+    var row = document.createElement("button");
+    row.className = "recent_item";
+    row.type = "button";
+
+    var name = document.createElement("div");
+    name.className = "recent_name";
+    name.textContent = brief.name;
+
+    var sub = document.createElement("div");
+    sub.className = "recent_sub";
+    sub.textContent = brief.sector
+      ? brief.sector + " \u00b7 " + brief.ago
+      : brief.ago;
+
+    row.appendChild(name);
+    row.appendChild(sub);
+    row.addEventListener("click", function () { openBrief(brief.file); });
+    return row;
+  }
+
+  // Build one library row for the main view.
+  function libraryRow(brief) {
+    var row = document.createElement("button");
+    row.className = "library_row";
+    row.type = "button";
+
+    var mark = document.createElement("div");
+    mark.className = "library_mark";
+    mark.textContent = (brief.name || "?").charAt(0).toUpperCase();
+
+    var meta = document.createElement("div");
+    meta.className = "library_meta";
+    var name = document.createElement("div");
+    name.className = "library_name";
+    name.textContent = brief.name;
+    var sub = document.createElement("div");
+    sub.className = "library_sub";
+    sub.textContent = brief.sector
+      ? brief.sector + " \u00b7 " + brief.ago
+      : brief.ago;
+    meta.appendChild(name);
+    meta.appendChild(sub);
+
+    row.appendChild(mark);
+    row.appendChild(meta);
+
+    // Show the recorded decision as a pill when there is one.
+    if (brief.recommendation) {
+      var rec = document.createElement("div");
+      rec.className = "library_rec";
+      rec.textContent = brief.recommendation;
+      row.appendChild(rec);
+    }
+
+    row.addEventListener("click", function () { openBrief(brief.file); });
+    return row;
+  }
+
+  // Fetch the saved briefs and paint the recent list and the library.
+  function loadBriefs() {
+    fetch("/briefs")
+      .then(function (response) { return response.json(); })
+      .then(function (data) {
+        var briefs = data.briefs || [];
+        paintRecent(briefs);
+        paintLibrary(briefs);
+      })
+      .catch(function () {
+        // A failed load should never break the page, so leave the empty state.
+      });
+  }
+
+  // Paint the top few briefs into the sidebar recent list.
+  function paintRecent(briefs) {
+    recentListEl.innerHTML = "";
+    if (!briefs.length) {
+      var empty = document.createElement("div");
+      empty.className = "recent_empty";
+      empty.textContent = "Generated briefs will show up here.";
+      recentListEl.appendChild(empty);
+      return;
+    }
+    briefs.slice(0, 5).forEach(function (brief) {
+      recentListEl.appendChild(recentRow(brief));
+    });
+  }
+
+  // Paint the full set of briefs into the library view.
+  function paintLibrary(briefs) {
+    libraryListEl.innerHTML = "";
+    libraryCountEl.textContent = briefs.length === 1
+      ? "1 brief"
+      : briefs.length + " briefs";
+    libraryEmptyEl.classList.toggle("hidden", briefs.length > 0);
+    briefs.forEach(function (brief) {
+      libraryListEl.appendChild(libraryRow(brief));
+    });
+  }
+
+  // Switch between the new brief view and the library view.
+  function switchView(view) {
+    viewNew.classList.toggle("hidden", view !== "new");
+    viewLibrary.classList.toggle("hidden", view !== "library");
+    Array.prototype.forEach.call(navItems, function (item) {
+      item.classList.toggle("active", item.getAttribute("data-view") === view);
+    });
+    // Refresh the library each time it is opened so it stays current.
+    if (view === "library") { loadBriefs(); }
+  }
+
+  // Wire the nav items to the view switch.
+  Array.prototype.forEach.call(navItems, function (item) {
+    item.addEventListener("click", function () {
+      switchView(item.getAttribute("data-view"));
+    });
+  });
+
   // Allow command or control plus enter to generate from anywhere on the page.
   document.addEventListener("keydown", function (e) {
     if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
@@ -340,4 +475,5 @@ shows a working state, and renders the returned PDF inline in the preview pane.
   renderFile();
   updateSectorPreview();
   showState("idle");
+  loadBriefs();
 })();
