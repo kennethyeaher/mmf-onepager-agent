@@ -110,8 +110,7 @@ RECOMMENDATION: the recorded decision, not your own verdict. Read it from the
 inputs and do not invent one.
   - If the inputs show the team reached an explicit decision, state it in a few
     words and attribute it, for example "Advance to diligence (team, 6/3 call)"
-    or "Pass (team)". A valid decision is one of advance, track, pass, or a
-    partner meeting.
+    or "Pass (team)". A valid decision is one of advance, track,or a pass.
   - A next action such as scheduling a follow up call is not a decision. Do not
     promote it into one.
   - If no explicit decision appears in the inputs, write "No decision recorded".
