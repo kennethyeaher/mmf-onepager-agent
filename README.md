@@ -1,5 +1,9 @@
 # MMF One Pager Agent
 
+![Python](docs/readme/badges/python-3776AB.svg)
+![Flask](docs/readme/badges/flask-333333.svg)
+![Anthropic API](docs/readme/badges/anthropic-5A4637.svg)
+
 A local tool that turns deal notes and uploaded documents into a fund branded PDF investment brief. It runs the notes through Claude with web search to produce a structured sourcing brief in Markdown, then renders that Markdown into a Maryland Momentum Fund branded PDF with WeasyPrint.
 
 ## What it does
@@ -15,6 +19,17 @@ The web interface and files run locally. Brief generation sends supplied notes a
 ## My contribution
 
 I built the local brief workflow across the command line, Flask interface, PDF template, and saved brief library. Generated research still needs analyst review before use.
+
+## From source notes to a reviewable brief
+
+| Stage | What the workflow preserves |
+| --- | --- |
+| Input | Pasted notes or local text, Markdown, and PDF documents. |
+| Research and drafting | A structured Markdown brief with sourced claims and open diligence questions. |
+| Analyst review | Editable Markdown plus explicit sector and recommendation controls in the web interface. |
+| Export and retrieval | A branded PDF and a local library of generated briefs. |
+
+A model generated brief is a starting point for diligence. Check source claims, assumptions, market calculations, and recommendations before sharing it. Rendering edited Markdown can be done separately from another model call.
 
 ## Requirements
 
