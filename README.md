@@ -10,7 +10,11 @@ The brief always includes an independent investor view: thesis, key risks, a bot
 
 The tool runs two ways. The command line reads a per company inputs folder directly and is the fastest path for repeatable batches or free Markdown re renders. A local web app wraps the same pipeline in a full browser interface, so a non technical user can paste notes, attach a deck, pick a sector, and record a recommendation without touching a terminal beyond starting the server.
 
-The tool is designed to run entirely on one machine. There is no hosted deployment, no shared server, and no shared key. Each user runs it locally against their own Anthropic account.
+The web interface and files run locally. Brief generation sends supplied notes and documents to the Anthropic API and uses web search; it is not an offline workflow. Each user supplies their own account and API key.
+
+## My contribution
+
+I built the local brief workflow across the command line, Flask interface, PDF template, and saved brief library. Generated research still needs analyst review before use.
 
 ## Requirements
 
@@ -31,7 +35,7 @@ Budget 20 to 30 minutes the first time. After that, starting the tool takes a fe
 This is the credential that lets the tool talk to Claude, tied to your own account and your own billing.
 
 1. Go to console.anthropic.com and sign in or create an account.
-2. Add a payment method under Settings, Billing. Usage is pay as you go. Generating a brief costs roughly thirty to forty five cents in API usage.
+2. Add a payment method under Settings, Billing. Usage is pay as you go. Cost depends on the selected model, input size, and web search usage.
 3. Go to Settings, API Keys, and click Create Key. Name it something like "MMF one pager tool."
 4. Copy the key. It starts with `sk-ant-`. You will only see it once, so keep it somewhere safe for a moment. Never share this key or paste it into email, Slack, or chat.
 
@@ -265,7 +269,7 @@ Every brief generated through the web app is recorded in `output/index.json`, al
 
 ## Cost notes
 
-Each brief runs roughly thirty to forty five cents depending on inputs. To keep costs down:
+API costs vary with the selected model, input size, and web search usage. To keep costs down:
 
 - Keep notes as pasted text or Markdown and reserve PDF for documents where tables or figures carry meaning
 - Do not feed raw pitch decks, which are image heavy and can double the cost. Extract a deck once into a saved `deck_summary.md` and drop that in the folder instead
@@ -311,3 +315,16 @@ Page colors are set in the template, not pulled from the logo. The logo is read 
 - A streaming progress bar in the web app, replacing the current indeterminate spinner with real step by step status.
 - HubSpot CRM integration is built but dormant. It will be re enabled behind a `--hubspot` flag once production CRM access is approved.
 - Real fonts (Fraunces, Inter, JetBrains Mono) can be added later by dropping woff2 files into `assets/fonts/` and wiring up @font-face.
+
+![Decorative project banner: A local workspace for investment research.](docs/readme/footer.svg)
+
+---
+
+## Author
+
+**Kenneth Yeaher**  
+Master of Information Management  
+University of Maryland, College Park  
+[![LinkedIn: Kenneth Yeaher](https://img.shields.io/badge/LinkedIn-Kenneth_Yeaher-0A66C2?style=flat)](https://www.linkedin.com/in/kennethyeaher/)
+
+`Python` · `Flask` · `Document Workflows`
