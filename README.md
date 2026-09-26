@@ -1,44 +1,3 @@
-<p align="center">
-  <img src="docs/readme/banner.svg" alt="MMF Brief Builder. From deal notes to a structured investment brief." width="100%">
-</p>
-
-<p align="center">
-  <img alt="Python + Flask" src="https://img.shields.io/badge/Python%20%2B%20Flask-621F39?style=flat-square">
-</p>
-
-<p align="center"><a href="app.py">Web entry point</a> &nbsp; · &nbsp; <a href="main.py">Command line</a> &nbsp; · &nbsp; <a href="templates/template.html">Rendering template</a></p>
-
-## Overview
-
-A locally hosted workflow for turning company notes and supporting PDFs into a structured sourcing brief. A browser interface and command-line entry point share the same generation and PDF-rendering pipeline.
-
-## At a glance
-
-| Area | What to look for |
-| --- | --- |
-| **Capture** | Accept notes, supporting PDFs, sector context, and a recorded recommendation. |
-| **Structure** | Separate claims, independent analysis, open questions, and unverified information. |
-| **Review** | Keep editable Markdown beside the branded PDF and browse prior briefs in a local library. |
-
-## Start here
-
-After following the Python, system-library, and API-key setup below, run:
-
-```sh
-python app.py
-```
-
-Open `http://127.0.0.1:5000`.
-
-## Scope
-
-The interface and output library run locally. Generating a brief sends supplied material to the Anthropic API and can incur usage charges. Draft analysis and generated statements still require human review.
-
----
-
-<details>
-<summary><strong>Installation, usage, troubleshooting, and implementation notes</strong></summary>
-
 # MMF One Pager Agent
 
 A local tool that turns deal notes and uploaded documents into a fund branded PDF investment brief. It runs the notes through Claude with web search to produce a structured sourcing brief in Markdown, then renders that Markdown into a Maryland Momentum Fund branded PDF with WeasyPrint.
@@ -51,7 +10,7 @@ The brief always includes an independent investor view: thesis, key risks, a bot
 
 The tool runs two ways. The command line reads a per company inputs folder directly and is the fastest path for repeatable batches or free Markdown re renders. A local web app wraps the same pipeline in a full browser interface, so a non technical user can paste notes, attach a deck, pick a sector, and record a recommendation without touching a terminal beyond starting the server.
 
-The interface and generated file library run on one machine; brief generation calls the external Anthropic API. There is no hosted deployment, no shared server, and no shared key. Each user runs it locally against their own Anthropic account.
+The tool is designed to run entirely on one machine. There is no hosted deployment, no shared server, and no shared key. Each user runs it locally against their own Anthropic account.
 
 ## Requirements
 
@@ -352,5 +311,3 @@ Page colors are set in the template, not pulled from the logo. The logo is read 
 - A streaming progress bar in the web app, replacing the current indeterminate spinner with real step by step status.
 - HubSpot CRM integration is built but dormant. It will be re enabled behind a `--hubspot` flag once production CRM access is approved.
 - Real fonts (Fraunces, Inter, JetBrains Mono) can be added later by dropping woff2 files into `assets/fonts/` and wiring up @font-face.
-
-</details>
