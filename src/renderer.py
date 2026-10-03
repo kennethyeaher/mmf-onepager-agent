@@ -31,7 +31,7 @@ from weasyprint import HTML
 DOC_TITLE = "Investment Sourcing Brief"
 
 # Name shown in the provenance footer.
-PREPARED_BY = "Michael Ravenscroft, MD and Kenneth Yeaher, Associate"
+PREPARED_BY = "Kenneth Yeaher, Associate"
 
 # Resolve paths from the package root so the tool runs from any directory.
 BASE_DIR = Path(__file__).resolve().parent.parent
