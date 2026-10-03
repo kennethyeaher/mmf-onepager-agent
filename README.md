@@ -247,7 +247,7 @@ The path it prints should end inside `mmf-onepager-agent\.venv`.
 
 **The browser tab says it cannot connect.** The tool is not running. Go back to the terminal window and confirm you see the "Running on" message. If that window was closed, the tool stopped, restart it with the commands under "Using it going forward."
 
-**"Address already in use," port 5000 taken.** The tool is already running in another window somewhere. Close it there first, or restart your computer.
+**"Address already in use," port 5000 taken.** The tool is already running in another window somewhere. Close it there first, or restart your computer. On a Mac running macOS 12 or later, the usual cause is AirPlay Receiver (a Control Center feature), which listens on port 5000. Turn it off in System Settings > General > AirDrop & Handoff, or start the tool on another port with `flask --app app run --port 5055` and open http://127.0.0.1:5055.
 
 **Windows only, "python is not recognized."** Python was installed without adding it to PATH. Reinstall Python from python.org and check "Add python.exe to PATH" during setup, or use `py` instead of `python` in the commands above, which is a launcher Windows installs separately.
 
