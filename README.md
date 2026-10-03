@@ -1,10 +1,35 @@
-# MMF One Pager Agent
+<p align="center">
+  <img src="docs/assets/banner.svg" alt="MMF One Pager Agent. Deal notes in, a reviewable investment brief out. A loose note card turns into a branded brief page." width="100%">
+</p>
 
-![Python](docs/readme/badges/python-3776AB.svg)
-![Flask](docs/readme/badges/flask-333333.svg)
-![Anthropic API](docs/readme/badges/anthropic-5A4637.svg)
+<p align="center">
+  <strong>A local tool that turns deal notes and uploaded documents into a fund branded PDF investment brief.</strong><br>
+  It runs the notes through Claude with web search to produce a structured sourcing brief in Markdown, then renders that Markdown into a Maryland Momentum Fund branded PDF with WeasyPrint.
+</p>
 
-A local tool that turns deal notes and uploaded documents into a fund branded PDF investment brief. It runs the notes through Claude with web search to produce a structured sourcing brief in Markdown, then renders that Markdown into a Maryland Momentum Fund branded PDF with WeasyPrint.
+<p align="center">
+  <img alt="Python" src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white">
+  <img alt="Flask" src="https://img.shields.io/badge/Flask-333333?style=flat-square&logo=flask&logoColor=white">
+  <img alt="Anthropic API" src="https://img.shields.io/badge/Anthropic_API-5A4637?style=flat-square&logo=anthropic&logoColor=white">
+  <img alt="WeasyPrint" src="https://img.shields.io/badge/WeasyPrint-7a1622?style=flat-square">
+  <img alt="Runs on localhost" src="https://img.shields.io/badge/runs%20on-localhost-7a1622?style=flat-square">
+</p>
+
+<p align="center">
+  <a href="#what-it-does"><strong>What it does</strong></a> &nbsp; · &nbsp;
+  <a href="#from-source-notes-to-a-reviewable-brief">Review workflow</a> &nbsp; · &nbsp;
+  <a href="#setup">Setup</a> &nbsp; · &nbsp;
+  <a href="#command-line-usage">Command line</a> &nbsp; · &nbsp;
+  <a href="#cost-notes">Cost notes</a>
+</p>
+
+---
+
+<img src="docs/assets/web-app-1440.png" alt="The web app at desktop width. A maroon sidebar holds New Brief, Brief Library, and a Recent list with one fictional Example Robotics brief. The form shows the company name Example Robotics, the HealthTech sector selected, the sub sector Robotics, and pasted fictional call notes, with a live output preview card on the right." width="100%">
+
+<p align="center"><img src="docs/assets/sample-brief.png" alt="A one page Maryland Momentum Fund sourcing brief for Example Robotics, a fictional company. It shows the recommendation box reading No decision recorded, Quick Facts and Traction panels, a Problem section that says the sample cites no real sources, and an Investor View with thesis, risks, open questions, and what could not be verified." width="760"></p>
+
+<p align="center"><sub>The sample uses a fictional company and fictional notes written for this README. It was rendered with the no model `--render` path, so no deal data or API call was involved.</sub></p>
 
 ## What it does
 
@@ -31,6 +56,10 @@ I built the local brief workflow across the command line, Flask interface, PDF t
 
 A model generated brief is a starting point for diligence. Check source claims, assumptions, market calculations, and recommendations before sharing it. Rendering edited Markdown can be done separately from another model call.
 
+---
+
+## Setup
+
 ## Requirements
 
 - Python 3.12
@@ -39,13 +68,13 @@ A model generated brief is a starting point for diligence. Check source claims, 
 - WeasyPrint 69.0, which needs Pango and Cairo on the system, not just from pip. The install path differs by operating system, covered in setup below
 - Flask 3.1.3, only needed to run the web app, not the command line
 
----
-
-## Step by step setup
+<details>
+<summary><strong>Step by step setup for macOS and Windows</strong></summary>
+<br>
 
 Budget 20 to 30 minutes the first time. After that, starting the tool takes a few seconds.
 
-### Step 1: Get an Anthropic API key
+#### Step 1: Get an Anthropic API key
 
 This is the credential that lets the tool talk to Claude, tied to your own account and your own billing.
 
@@ -54,7 +83,7 @@ This is the credential that lets the tool talk to Claude, tied to your own accou
 3. Go to Settings, API Keys, and click Create Key. Name it something like "MMF one pager tool."
 4. Copy the key. It starts with `sk-ant-`. You will only see it once, so keep it somewhere safe for a moment. Never share this key or paste it into email, Slack, or chat.
 
-### Step 2: Install Python and Git
+#### Step 2: Install Python and Git
 
 Check whether you already have what you need before installing anything.
 
@@ -88,7 +117,7 @@ winget install Git.Git
 
 If winget is not available, download installers directly from python.org and git-scm.com instead. During the Python installer, check the box that says "Add python.exe to PATH" before clicking install, this matters, without it the next steps will not find Python. Close and reopen PowerShell after installing so it picks up the new programs.
 
-### Step 3: Get the code
+#### Step 3: Get the code
 
 Choose a location, for example your Desktop, and download the code. This step is the same command on both operating systems, just run from Terminal on Mac or PowerShell on Windows.
 
@@ -100,7 +129,7 @@ cd mmf-onepager-agent
 
 On Windows, `cd ~/Desktop` may not resolve the same way depending on your setup. If it fails, use the full path instead, for example `cd C:\Users\YourName\Desktop`.
 
-### Step 4: Set up the Python environment and install dependencies
+#### Step 4: Set up the Python environment and install dependencies
 
 This creates an isolated space for the tool's dependencies so it does not interfere with anything else on your computer.
 
@@ -132,7 +161,7 @@ Your PowerShell prompt should now show `(.venv)` at the start of the line.
 
 WeasyPrint needs the GTK3 runtime on Windows, which provides Pango and Cairo. This is the step most likely to need a second try. Download and run the GTK3 runtime installer for Windows, search "GTK3 runtime installer Windows" or use the installer maintained at github.com/tschoonj/GTK-for-Windows-Runtime-Environment-Installer, run it with default options, then close and reopen PowerShell so it picks up the new libraries. If you still hit WeasyPrint errors after this, check WeasyPrint's own install documentation for the current Windows requirements, since these can shift between versions.
 
-### Step 5: Add your API key
+#### Step 5: Add your API key
 
 Both operating systems ship a template file, `.env.example`, that you copy and fill in.
 
@@ -156,7 +185,7 @@ ANTHROPIC_API_KEY=sk-ant-your-real-key-here
 
 Save and close. This file is gitignored on both platforms, so your key never gets committed or shared through the code.
 
-### Step 6: Run it
+#### Step 6: Run it
 
 With your environment active, meaning `(.venv)` shows in your prompt, run:
 
@@ -166,13 +195,15 @@ python app.py
 
 You should see a message that it is running, something like `Running on http://127.0.0.1:5000`. Open a browser and go to that address. You should see the branded MMF sourcing brief tool.
 
-### Step 7: Test it
+#### Step 7: Test it
 
 Type a company name, paste in a sentence or two of test notes, and click Generate brief. It takes 30 to 90 seconds. When it finishes, a branded PDF should appear in the preview pane, downloadable from there. Check the sidebar too, your test brief should appear under Recent, and the full Brief Library view should list it.
 
----
+</details>
 
-## Using it going forward
+<details>
+<summary><strong>Using it going forward</strong></summary>
+<br>
 
 Every time you want to use the tool, from inside the project folder:
 
@@ -196,9 +227,11 @@ Then open `http://127.0.0.1:5000` in your browser. When done, go back to the ter
 
 Every brief you generate is saved automatically in the `output` folder, both as a PDF and as the underlying Markdown, so nothing is lost between sessions.
 
----
+</details>
 
-## Troubleshooting
+<details>
+<summary><strong>Troubleshooting</strong></summary>
+<br>
 
 **"ModuleNotFoundError" when running `python app.py`.** Your terminal is not using the project's environment. Reactivate it (`source .venv/bin/activate` on Mac, `.venv\Scripts\activate` on Windows) from inside the `mmf-onepager-agent` folder, then confirm with:
 
@@ -217,6 +250,8 @@ The path it prints should end inside `mmf-onepager-agent\.venv`.
 **"Address already in use," port 5000 taken.** The tool is already running in another window somewhere. Close it there first, or restart your computer.
 
 **Windows only, "python is not recognized."** Python was installed without adding it to PATH. Reinstall Python from python.org and check "Add python.exe to PATH" during setup, or use `py` instead of `python` in the commands above, which is a launcher Windows installs separately.
+
+</details>
 
 ---
 
