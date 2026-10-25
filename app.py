@@ -15,12 +15,13 @@ Required environment variable:
     ANTHROPIC_API_KEY : an Anthropic API key, loaded from the .env file
 """
 
+import logging
 import re
 import tempfile
 from pathlib import Path
 
 from dotenv import load_dotenv
-from flask import Flask, request, send_file, render_template
+from flask import Flask, abort, render_template, request, send_file
 
 from src import brief_agent, library, renderer
 
@@ -37,6 +38,21 @@ load_dotenv()
 
 # Serve templates from templates and static assets from static, the defaults.
 app = Flask(__name__)
+app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
+
+LOGGER = logging.getLogger(__name__)
+LOCAL_HOST = "127.0.0.1:5000"
+LOCAL_ORIGIN = f"http://{LOCAL_HOST}"
+
+
+@app.before_request
+def enforce_local_request_boundary():
+    """Reject unexpected hosts and cross-origin requests that can change data."""
+    if request.host != LOCAL_HOST:
+        abort(404)
+    if request.method not in {"GET", "HEAD", "OPTIONS"}:
+        if request.headers.get("Origin") != LOCAL_ORIGIN:
+            abort(403)
 
 
 def save_markdown(company_name, brief, out_dir):
@@ -136,7 +152,10 @@ def generate():
     # Save an uploaded deck to a temp PDF so it can be passed as a document.
     pdf_paths = []
     temp_pdf = None
-    if deck and deck.filename.lower().endswith(".pdf"):
+    if deck and deck.filename and deck.filename.lower().endswith(".pdf"):
+        if deck.stream.read(5) != b"%PDF-":
+            return "The uploaded file is not a valid PDF.", 415
+        deck.stream.seek(0)
         temp_pdf = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
         deck.save(temp_pdf.name)
         pdf_paths.append(Path(temp_pdf.name))
@@ -163,8 +182,9 @@ def generate():
         # Name the response so the browser saves it like the command line does,
         # for example Activate_onepager.pdf instead of a generic Unknown name.
         return send_file(str(pdf_path), as_attachment=False, download_name=pdf_path.name)
-    except Exception as error:
-        return f"Generation failed: {error!r}", 500
+    except Exception:
+        LOGGER.exception("Brief generation failed.")
+        return "Brief generation failed. Check the local app log.", 500
     finally:
         # Remove the temp deck file whether or not the run succeeded.
         if temp_pdf is not None:
